@@ -68,14 +68,16 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     rb::MotorId idLeft() const { return m_id_left; }
     rb::MotorId idRight() const { return m_id_right; }
+    
+    int16_t pctToSpeed(float pct);
+    int32_t mmToTicks(float mm) const;
 
 private:
     Motors(const Motors&) = delete;
 
     static int32_t scale(int32_t val);
     static int16_t pctToPower(int8_t pct);
-    int16_t pctToSpeed(float pct);
-    int32_t mmToTicks(float mm) const;
+
     int32_t mmToTicks_left(float mm) const;
     int32_t mmToTicks_right(float mm) const;
     float ticksToMm(int32_t ticks) const;
