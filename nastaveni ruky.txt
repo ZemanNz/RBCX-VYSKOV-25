@@ -1,0 +1,31 @@
+#include <Arduino.h>
+#include "robotka.h"
+
+void setup() {
+    rkConfig cfg;
+    rkSetup(cfg);
+    printf("Robotka started!\n");
+    
+    rkLedRed(true); // Turn on red LED
+    rkLedBlue(true); // Turn on blue LED
+
+
+    rkSmartServoInit(0, 3, 190, 500, 3);
+    rkSmartServoInit(1, 200, 229, 500, 3);
+    
+    
+}
+void loop() {
+    if (rkButtonIsPressed(BTN_UP)) { // Zavrit klepeta
+        rkSmartServoSoftMove(1,228,100);
+    }
+    if (rkButtonIsPressed(BTN_LEFT)) { // otevrit klepeta
+        rkSmartServoMove(1,200, 100);
+    } 
+    if (rkButtonIsPressed(BTN_RIGHT)) { // Ruka dolu
+        rkSmartServoMove(0,5, 100);
+    } 
+    if (rkButtonIsPressed(BTN_ON)) { // Ruka nahoru
+        rkSmartServoMove(0,185, 100);
+    } 
+}

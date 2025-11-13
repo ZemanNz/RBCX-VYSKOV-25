@@ -1,9 +1,6 @@
 # TO DO:
 
 * Už asi nic....... Jen kdyby se naskytla nejaka chybka.......
-* udelat dokumentaci nastavovani serv ty id 0 a 1
-
-
 
 
 
@@ -47,3 +44,5 @@ udelat funkce pro ovladani na dalku (s,w,a,d), (<>)
 * zdokumentovat ten uart zkrz novy fotky v osekana robotka
 * udelat dokumentaci knihiovny....  -----> readme   --- ano udelat 
 * citlivost chytrych serv mozne nastavit v init
+* udelat dokumentaci nastavovani serv ty id 0 a 1
+* opravit fotky bo spammmy

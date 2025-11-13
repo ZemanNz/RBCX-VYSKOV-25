@@ -1,24 +1,25 @@
-#include <Arduino.h>
 #include "robotka.h"
 
 void setup() {
+    Serial.begin(115200);
     rkConfig cfg;
     rkSetup(cfg);
-    printf("Robotka started!\n");
-    
-    rkLedRed(true); // Turn on red LED
-    rkLedBlue(true); // Turn on blue LED
 
-
-    rkSmartServoInit(0, 80, 240, 500, 3);
-    
-    
+    // Nastavení serva
+    rkServosSetPosition(1, 85); //85 stupnu je zavrene zasobniky
+    rkServosSetPosition(2, 85);
+    rkServosSetPosition(3, 85);
 }
+
 void loop() {
+
     if (rkButtonIsPressed(BTN_UP)) {
-        rkSmartServoMove(0,0,100);
+        rkServosSetPosition(1, -70); //-70 stupnu je otevrene zasobniky
     }
-    if (rkButtonIsPressed(BTN_DOWN)) {
-        rkSmartServoMove(0,240, 100);
-    } 
+    if (rkButtonIsPressed(BTN_RIGHT)) {
+        rkServosSetPosition(2, -70);
+    }
+    if (rkButtonIsPressed(BTN_LEFT)) {
+        rkServosSetPosition(3, -70);
+    }
 }
