@@ -66,8 +66,8 @@ struct rkConfig {
         , korekce_nedotacivosti_right(1.12f)// Korekce nedotáčivosti při otaceni na miste do prava
         , Button1(14)
         , Button2(35)
-        , motor_id_left(1)
-        , motor_id_right(4)
+        , motor_id_left(2)
+        , motor_id_right(1)
         , motor_max_power_pct(100)
         , motor_polarity_switch_left(false)
         , motor_polarity_switch_right(true)

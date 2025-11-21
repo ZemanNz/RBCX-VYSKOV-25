@@ -11,6 +11,10 @@ float wheel_circumference_right;
 bool polarity_switch_left;
 bool polarity_switch_right;
 
+Adafruit_TCS34725 tcs1 = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+float r1, g1, b1;
+
+
 int16_t pctToSpeed(float pct) {
     pct = rb::clamp(pct, -100.0f, 100.0f);
     int32_t speed = static_cast<int32_t>((pct * max_speed) / 100.0f);
@@ -152,21 +156,39 @@ void setup() {
     polarity_switch_left = cfg.motor_polarity_switch_left;
     polarity_switch_right = cfg.motor_polarity_switch_right;
 
-    // Nastavení serva
-    rkServosSetPosition(1, 85); //85 stupnu je zavrene zasobniky
-    rkServosSetPosition(2, 85);
-    rkServosSetPosition(3, 85);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    rkLedBlue(true);
+
+    init_ruka();
+
+    pinMode(21, PULLUP);
+    pinMode(22, PULLUP);
+
+    Wire1.begin(21, 22, 400000);
+    Wire1.setTimeOut(1);
+
+    rkColorSensorInit("klepeta_senzor", Wire1, tcs1);
+
+    //zavri_vsechny_zasobniky();
+
 }
 
 void loop() {
 
     if (rkButtonIsPressed(BTN_UP)) {
-        rkServosSetPosition(1, -70); //-70 stupnu je otevrene zasobniky
+        //otoc_motorem(240, true);
+        //otevri_vsechny_zasobniky();
+        natocit_ruku(1); // 1 je na nabirani a G
     }
     if (rkButtonIsPressed(BTN_RIGHT)) {
-        rkServosSetPosition(2, -70);
+        forward(1000, 80);
     }
     if (rkButtonIsPressed(BTN_LEFT)) {
-        rkServosSetPosition(3, -70);
+        //ruka_dolu();
+        //natocit_ruku(2);
+        chyt_a_uloz_kostku();
     }
 }
