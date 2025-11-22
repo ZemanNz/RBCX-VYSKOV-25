@@ -5,7 +5,7 @@ const int in1 =  25;
 const int in2 =  26;
 const int in3 =  27;
 const int in4 =  14;
-int rychlost = 1; // mensi cislo = nizsi rychlost
+int rychlost = 1; // vetsi cislo = nizsi rychlost
 
 void otevri_zasobnik(int8_t id){
     rkServosSetPosition(id, -70);
@@ -46,11 +46,15 @@ void zavri_klepeta(){
 }
 
 void ruka_nahoru(){
-    rkSmartServoMove(0,185, 400);
+    rkSmartServoMove(0,185, 600);
+}
+
+void ruka_top_nahoru(){
+    rkSmartServoMove(0,170, 600);
 }
 
 void ruka_dolu(){
-    rkSmartServoMove(0,9, 300);
+    rkSmartServoMove(0,9, 400);
 }
 
 
@@ -147,6 +151,15 @@ void otoc_motorem(int uhel, bool ruka_po_smeru){
 
 }
 
+void nastav_ruku_na_start(){
+  zavri_klepeta();
+  ruka_dolu();
+  delay(500);
+  otoc_motorem(140, true);
+  delay(500);
+  otoc_motorem(68, false);
+}
+
 void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2
     if(posledni_natoceni == id_zasobniku){
         return;
@@ -156,7 +169,7 @@ void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2
     if(id_zasobniku == 1){//4 moznosti.....
         if(posledni_natoceni == 0){ // otaceni k nabirani
             smer = false;
-            uhel = 250;
+            uhel = 243;
         }
         else{
             smer = true;
@@ -165,7 +178,7 @@ void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2
     }
     else if(id_zasobniku == 0){// otaceni k vhazovani
         smer = true;
-        uhel = 250;
+        uhel = 243;
     }
     else if(id_zasobniku == 2){
         smer = false;
@@ -176,9 +189,10 @@ void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2
     }
     posledni_natoceni = id_zasobniku;
     otoc_motorem(uhel, smer);
-    }
+}
 
 void chyt_a_uloz_kostku(){
+    int start_time = millis();
     zavri_klepeta();
     delay(500);
     int8_t id_zasobniku = 5; // R - 0, G - 1 , B - 2
@@ -189,53 +203,90 @@ void chyt_a_uloz_kostku(){
     Serial.print(" B: "); Serial.println(b, 3);
 
     delay(300);
+
     if(r > g && r > b && r > 140){ // tohle jeste dodelatna zakladenamerenych hodnot...
         id_zasobniku = 0; // cervena je 0
+        std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
+
+        ruka_top_nahoru();
+        delay(100);
+
+        natocit_ruku(id_zasobniku);
+
+        delay(200);
+
+        ruka_nahoru();
+        delay(300);
+
+        otevri_klepata();
+        delay(500);
+
+        ruka_top_nahoru();
+
+        natocit_ruku(1); // 1 je na nabirani a G
+
+        delay(100);
+
+        ruka_dolu();
+        delay(400);
     }
     if(g > r && g> b && g > 90){
         id_zasobniku = 1; // zelena je 1
+        std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
+        ruka_nahoru();
+        delay(1200);
+        otevri_klepata();
+        delay(500);
+        ruka_dolu();
+        delay(400);
     }
     if(b > g && b> r && b > 100){
         id_zasobniku = 2; // modra je 2
-    }
-    std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
+        std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
-    if(id_zasobniku < 0 || id_zasobniku >2){
+        ruka_top_nahoru();
+        delay(100);
+
+        natocit_ruku(id_zasobniku);
+
+        delay(200);
+
+        ruka_nahoru();
+        delay(300);
+
         otevri_klepata();
-        return;
+        delay(500);
+
+        ruka_top_nahoru();
+
+        natocit_ruku(1); // 1 je na nabirani a G
+
+        delay(100);
+
+        ruka_dolu();
+        delay(400);
+
     }
-    ruka_nahoru();
-    delay(500);
-
-    natocit_ruku(id_zasobniku);
-
-    delay(400);
 
     otevri_klepata();
     delay(500);
-
-    natocit_ruku(1); // 1 je na nabirani a G
-
-    delay(800);
-
-    ruka_dolu();
-    delay(400);
 }
 
+
 bool try_to_catch(){
-    rkSmartServoSoftMove(1,220,100);
-    delay(100);
+    zavri_klepeta();
+    delay(600);
     float r,g,b;
     rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
+    delay(100);
     Serial.print(" R: "); Serial.print(r, 3);
     Serial.print(" G: "); Serial.print(g, 3);
     Serial.print(" B: "); Serial.println(b, 3);
+    otevri_klepata();
+    if((r > g && r > b && r > 140) || (g > r && g> b && g > 90) ||(b > g && b> r && b > 100)){
 
-    if(abs(r -g) > 80 || abs(g-b) > 80 || abs(r - b) > 80){
-        delay(100);
         return true;
     }
-    rkSmartServoMove(1,200, 100);
-    delay(100);
+    delay(10);
     return false;
 }

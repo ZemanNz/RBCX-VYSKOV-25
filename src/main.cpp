@@ -56,7 +56,7 @@ void jed_a_sbirej_kostky(float mm) {
     
     unsigned long start_time = millis();
     unsigned long start_time_for_try = millis();
-    int timeoutMs =30000;
+    int timeoutMs = 30000 * (mm / 400);
     int time_to_try = 2000;
     
     while((target_ticks_left > abs(left_pos) || target_ticks_right > abs(right_pos)) && 
@@ -181,14 +181,40 @@ void loop() {
     if (rkButtonIsPressed(BTN_UP)) {
         //otoc_motorem(240, true);
         //otevri_vsechny_zasobniky();
-        natocit_ruku(1); // 1 je na nabirani a G
+        //natocit_ruku(1); // 1 je na nabirani a G
+        delay(2000);
+        radius_left(200, 180, 40);
+        delay(10000);
+        radius_right(200, 180, 40);
+    }
+    if( rkButtonIsPressed(BTN_DOWN)) {
+        //zavri_vsechny_zasobniky();
+        rkLedGreen(true);
+        delay(2000);
+        forward_acc(1000, 50);
+        rkLedGreen(false);
     }
     if (rkButtonIsPressed(BTN_RIGHT)) {
-        forward(1000, 80);
+        rkLedRed(true);
+        delay(2000);
+        //forward(1000, 30);
+        jed_a_sbirej_kostky(1000);
+        rkLedRed(false);
+        //nastav_ruku_na_start();
     }
     if (rkButtonIsPressed(BTN_LEFT)) {
         //ruka_dolu();
         //natocit_ruku(2);
-        chyt_a_uloz_kostku();
+        // for(int i=0; i<12; i++){
+        //     chyt_a_uloz_kostku();
+        //     delay(3000);
+        // }
+        rkLedYellow(true);
+        delay(2000);
+        turn_on_spot_left(180, 50);
+        delay(2000);
+        turn_on_spot_right(180, 50);
+        rkLedYellow(false);
+        
     }
 }
