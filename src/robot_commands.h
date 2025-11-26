@@ -29,7 +29,7 @@ void zavri_vsechny_zasobniky(){
 
 void init_ruka(){
     rkSmartServoInit(0, 3, 190, 500, 3);
-    rkSmartServoInit(1, 200, 229, 500, 3);
+    rkSmartServoInit(1, 160, 190, 500, 3);
     pinMode(in1, OUTPUT);
     pinMode(in2, OUTPUT);
     pinMode(in3, OUTPUT);
@@ -37,12 +37,12 @@ void init_ruka(){
 }
 
 void otevri_klepata(){
-    rkSmartServoMove(1,200, 300);
+    rkSmartServoMove(1,160, 300);
 }
 
 void zavri_klepeta(){
     //rkSmartServoSoftMove(1,228,100); /// prvni test
-    rkSmartServoSoftMove(1,240,100); // test doma drevo
+    rkSmartServoSoftMove(1,190,200); // test doma drevo
 }
 
 void ruka_nahoru(){
@@ -155,9 +155,9 @@ void nastav_ruku_na_start(){
   zavri_klepeta();
   ruka_dolu();
   delay(500);
-  otoc_motorem(140, true);
+  otoc_motorem(100, false);
   delay(500);
-  otoc_motorem(68, false);
+  otoc_motorem(50, true);
 }
 
 void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2

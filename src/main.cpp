@@ -172,7 +172,16 @@ void setup() {
 
     rkColorSensorInit("klepeta_senzor", Wire1, tcs1);
 
-    //zavri_vsechny_zasobniky();
+    zavri_vsechny_zasobniky();
+
+    // pinMode(34, INPUT_PULLUP);
+    // pinMode(35, INPUT_PULLUP);
+
+    // while (true){
+    //     std::cout << "B1 : " << digitalRead(34)<<  std::endl;
+    //     std::cout << "B2 : " << digitalRead(35)<<  std::endl;
+    //     delay(500);
+    // }
 
 }
 
@@ -182,39 +191,46 @@ void loop() {
         //otoc_motorem(240, true);
         //otevri_vsechny_zasobniky();
         //natocit_ruku(1); // 1 je na nabirani a G
-        delay(2000);
-        radius_left(200, 180, 40);
-        delay(10000);
-        radius_right(200, 180, 40);
+        // delay(2000);
+        // radius_left(200, 180, 40);
+        // delay(10000);
+        // radius_right(200, 180, 40);
+        zavri_klepeta();
     }
     if( rkButtonIsPressed(BTN_DOWN)) {
+        otevri_klepata();
         //zavri_vsechny_zasobniky();
-        rkLedGreen(true);
-        delay(2000);
-        forward_acc(1000, 50);
-        rkLedGreen(false);
+        // rkLedGreen(true);
+        // delay(2000);
+        // forward_acc(1000, 50);
+        // rkLedGreen(false);
     }
     if (rkButtonIsPressed(BTN_RIGHT)) {
-        rkLedRed(true);
-        delay(2000);
-        //forward(1000, 30);
-        jed_a_sbirej_kostky(1000);
-        rkLedRed(false);
-        //nastav_ruku_na_start();
+        // rkLedRed(true);
+        // delay(2000);
+        // //forward(1000, 30);
+        // jed_a_sbirej_kostky(1000);
+        // rkLedRed(false);
+        nastav_ruku_na_start();
     }
     if (rkButtonIsPressed(BTN_LEFT)) {
-        //ruka_dolu();
+        
+        //zavri_vsechny_zasobniky();
+        ruka_nahoru();
+        
+        delay(2000);
+        ruka_dolu();
         //natocit_ruku(2);
         // for(int i=0; i<12; i++){
         //     chyt_a_uloz_kostku();
         //     delay(3000);
         // }
-        rkLedYellow(true);
-        delay(2000);
-        turn_on_spot_left(180, 50);
-        delay(2000);
-        turn_on_spot_right(180, 50);
-        rkLedYellow(false);
+        // rkLedYellow(true);
+        // delay(2000);
+        // turn_on_spot_left(180, 50);
+        // delay(2000);
+        // turn_on_spot_right(180, 50);
+        // rkLedYellow(false);
         
     }
 }
