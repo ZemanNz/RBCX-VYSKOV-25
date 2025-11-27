@@ -1134,7 +1134,7 @@ void rkSmartServoSoftMove(int id, int angle, int speed = 200);
  * @param bus Reference na SmartServoBus
  * @param id ID serva 1 nebo 0
  */
-byte rkSmartServosPosicion (int id);
+byte rkSmartServosPosicion(int id);
 ////////////////////////////////////////////////////////////////
 
 /**

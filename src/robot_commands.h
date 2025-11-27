@@ -17,13 +17,13 @@ void zavri_zasobnik(int8_t id){
 
 void otevri_vsechny_zasobniky(){
     rkServosSetPosition(2, -70);
-    rkServosSetPosition(3, -70);
+    rkServosSetPosition(3, -70);// zelezny
     rkServosSetPosition(4, -70);
 }
 
 void zavri_vsechny_zasobniky(){
     rkServosSetPosition(2, 85);
-    rkServosSetPosition(3, 80);
+    rkServosSetPosition(3, 72);
     rkServosSetPosition(4, 85);
 }
 
@@ -47,13 +47,37 @@ void zavri_klepeta(){
 
 void ruka_nahoru(){
     rkSmartServoMove(0,185, 600);
+    while(rkSmartServosPosicion(0) < 180){
+        rkSmartServoMove(0,185, 600);
+        delay(10);
+    }
 }
 
 void ruka_top_nahoru(){
     rkSmartServoMove(0,170, 600);
+    while(rkSmartServosPosicion(0) < 165){
+        rkSmartServoMove(0,170, 600);
+        delay(10);
+    }
 }
 
 void ruka_dolu(){
+    rkSmartServoMove(0,9, 400);
+    while(rkSmartServosPosicion(0) > 10){
+        rkSmartServoMove(0,9, 400);
+        delay(10);
+    }
+}
+
+void ruka_nahoru_neb(){
+    rkSmartServoMove(0,185, 600);
+}
+
+void ruka_top_nahoru_neb(){
+    rkSmartServoMove(0,170, 600);
+}
+
+void ruka_dolu_neb(){
     rkSmartServoMove(0,9, 400);
 }
 
@@ -154,7 +178,6 @@ void otoc_motorem(int uhel, bool ruka_po_smeru){
 void nastav_ruku_na_start(){
   zavri_klepeta();
   ruka_dolu();
-  delay(500);
   otoc_motorem(100, false);
   delay(500);
   otoc_motorem(50, true);
@@ -208,63 +231,60 @@ void chyt_a_uloz_kostku(){
         id_zasobniku = 0; // cervena je 0
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
-        ruka_top_nahoru();
+        ruka_top_nahoru_neb();
         delay(100);
 
         natocit_ruku(id_zasobniku);
 
-        delay(200);
-
         ruka_nahoru();
-        delay(300);
 
         otevri_klepata();
         delay(500);
 
-        ruka_top_nahoru();
+        ruka_top_nahoru_neb();
 
         natocit_ruku(1); // 1 je na nabirani a G
 
         delay(100);
 
+        zavri_klepeta();
+
         ruka_dolu();
-        delay(400);
+        otevri_klepata();
     }
     if(g > r && g> b && g > 90){
         id_zasobniku = 1; // zelena je 1
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
         ruka_nahoru();
-        delay(1200);
         otevri_klepata();
-        delay(500);
+        delay(700);
+        zavri_klepeta();
         ruka_dolu();
-        delay(400);
+        otevri_klepata();
     }
     if(b > g && b> r && b > 100){
         id_zasobniku = 2; // modra je 2
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
-        ruka_top_nahoru();
+        ruka_top_nahoru_neb();
         delay(100);
 
         natocit_ruku(id_zasobniku);
 
-        delay(200);
-
         ruka_nahoru();
-        delay(300);
 
         otevri_klepata();
         delay(500);
 
-        ruka_top_nahoru();
+        ruka_top_nahoru_neb();
 
         natocit_ruku(1); // 1 je na nabirani a G
 
         delay(100);
-
+        zavri_klepeta();
         ruka_dolu();
-        delay(400);
+        
+        otevri_klepata();
 
     }
 

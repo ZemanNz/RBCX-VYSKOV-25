@@ -303,16 +303,6 @@ void setup() {
 
     rkColorSensorInit("klepeta_senzor", Wire1, tcs1);
 
-    zavri_vsechny_zasobniky();
-
-    // pinMode(34, INPUT_PULLUP);
-    // pinMode(35, INPUT_PULLUP);
-
-    // while (true){
-    //     std::cout << "B1 : " << digitalRead(34)<<  std::endl;
-    //     std::cout << "B2 : " << digitalRead(35)<<  std::endl;
-    //     delay(500);
-    // }
 
 }
 
@@ -326,10 +316,16 @@ void loop() {
         // radius_left(200, 180, 40);
         // delay(10000);
         // radius_right(200, 180, 40);
-        zavri_klepeta();
+        //zavri_klepeta();
+        ruka_dolu();
+        delay(1000);
+        rkSmartServosPosicion(0);
     }
     if( rkButtonIsPressed(BTN_DOWN)) {
-        otevri_klepata();
+        ruka_nahoru();
+        delay(1000);
+        rkSmartServosPosicion(0);
+        //otevri_klepata();
         //zavri_vsechny_zasobniky();
         // rkLedGreen(true);
         // delay(2000);
@@ -342,26 +338,34 @@ void loop() {
         // //forward(1000, 30);
         // jed_a_sbirej_kostky(1000);
         // rkLedRed(false);
+        //nastav_ruku_na_start();
+        zavri_vsechny_zasobniky();
+        ruka_dolu();
+        delay(1500);
         nastav_ruku_na_start();
+        otevri_klepata();
+        rkLedBlue(false);
     }
     if (rkButtonIsPressed(BTN_LEFT)) {
         
         //zavri_vsechny_zasobniky();
-        ruka_nahoru();
-        
+        // ruka_nahoru();
+        rkLedYellow(true);
         delay(2000);
-        ruka_dolu();
+        // ruka_dolu();
         //natocit_ruku(2);
         // for(int i=0; i<12; i++){
         //     chyt_a_uloz_kostku();
         //     delay(3000);
         // }
-        // rkLedYellow(true);
+        jed_a_sbirej_kostky_buttons(5);
+        //chyt_a_uloz_kostku();
         // delay(2000);
         // turn_on_spot_left(180, 50);
         // delay(2000);
         // turn_on_spot_right(180, 50);
         // rkLedYellow(false);
+
         
     }
 }

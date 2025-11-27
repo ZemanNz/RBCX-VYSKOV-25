@@ -504,7 +504,7 @@ void rkSmartServoSoftMove(int id, int angle, int speed) {
     rk::smart_servo::rkSmartServoSoftMove(id, angle, speed);
 }
 
-byte rkSmartServoPosition(uint8_t id) {
+byte rkSmartServosPosicion(int id) {
     return rk::smart_servo::rkSmartServosPosicion(id);
 }
 
@@ -891,7 +891,7 @@ static void processCommand(const String &cmd) {
         }
         
         int id = (int)params[0];
-        byte position = rkSmartServoPosition(id);
+        byte position = rkSmartServosPosicion(id);
         Serial.printf("Smart Servo %d pozice: %d°\n", id, position);
         return;
     }
