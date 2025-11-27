@@ -254,13 +254,13 @@ void wall_following(float distance_to_drive,float speed, float distance_of_wall,
     gCtx.motors().wall_following(distance_to_drive, speed, distance_of_wall, is_wall_on_right, first_sensor, second_sensor);
 }
 void orient_to_wall(bool buttom_or_right, std::function<uint32_t()> first_sensor, 
-                   std::function<uint32_t()> second_sensor, float speed){
-    gCtx.motors().orient_to_wall(buttom_or_right, first_sensor, second_sensor, speed);
+                   std::function<uint32_t()> second_sensor, int o_kolik_je_dal_zadni, float speed){
+    gCtx.motors().orient_to_wall(buttom_or_right, first_sensor, second_sensor, o_kolik_je_dal_zadni, speed);
 }
 
 void orient_to_wall_any_price(bool button_or_right, std::function<uint32_t()> first_sensor, 
-                   std::function<uint32_t()> second_sensor, float speed){
-    gCtx.motors().orient_to_wall_any_price(button_or_right, first_sensor, second_sensor, speed);
+                   std::function<uint32_t()> second_sensor, int o_kolik_je_dal_zadni, float speed){
+    gCtx.motors().orient_to_wall_any_price(button_or_right, first_sensor, second_sensor, o_kolik_je_dal_zadni, speed);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1855,7 +1855,7 @@ void Motors::wall_following(float distance_to_drive, float speed, float distance
 }
 
 void Motors::orient_to_wall(bool button_or_right, std::function<int()> first_sensor, //first senzor se musi vzdy davat do prava, nebo do predu!!!
-                                   std::function<int()> second_sensor, float speed) { 
+                                   std::function<int()> second_sensor, int o_kolik_je_dal_zadni ,float speed) { 
     int distance_first = 0;
     int distance_second = 0;
 
@@ -1875,15 +1875,18 @@ void Motors::orient_to_wall(bool button_or_right, std::function<int()> first_sen
     delay(80);
     distance_second = second_sensor();
     // std::cout<< "Distance first: " << distance_first << " , Distance second: " << distance_second <<std::endl;
-    if(distance_first > 800 && distance_second > 800){
+    if(distance_first > 800 && distance_second > 800 + o_kolik_je_dal_zadni){
         // std::cout<< "Jsme moc daleko, nebo nevim jak se mam srovnat"<<std::endl;
         return;
     }
 
-    int start_error = distance_first - distance_second;
+    int vzdalenost_first = distance_first;
+    int vzdalenost_second = distance_second - o_kolik_je_dal_zadni;
 
+    int start_error = vzdalenost_first - vzdalenost_second;
+    
     if(button_or_right){
-        if(distance_first > distance_second){ //pray kolo couve a levy jede dopredu
+        if(vzdalenost_first > vzdalenost_second){ //pray kolo couve a levy jede dopredu
             if(m_polarity_switch_right){
                 speed_right = speed;
                 speed_left = speed;
@@ -1905,7 +1908,8 @@ void Motors::orient_to_wall(bool button_or_right, std::function<int()> first_sen
         }
     }
     else{
-        if(distance_first > distance_second){ //pray kolo jede dopredu a levy couve
+        if(vzdalenost_first > vzdalenost_second
+        ){ //pray kolo jede dopredu a levy couve
             if(m_polarity_switch_right){
                 speed_right = -speed;
                 speed_left = -speed;
@@ -1933,7 +1937,10 @@ void Motors::orient_to_wall(bool button_or_right, std::function<int()> first_sen
         distance_first = first_sensor();
         distance_second = second_sensor();
 
-        int error = distance_first - distance_second;
+        int vzdalenost_first = distance_first;  
+        int vzdalenost_second = distance_second - o_kolik_je_dal_zadni;
+
+        int error = vzdalenost_first - vzdalenost_second;
 
         if(abs(error) <= 5){ //nastavit
             break;
@@ -1962,7 +1969,7 @@ void Motors::orient_to_wall(bool button_or_right, std::function<int()> first_sen
 }
 
 void Motors::orient_to_wall_any_price(bool button_or_right, std::function<uint32_t()> first_sensor, 
-                   std::function<uint32_t()> second_sensor, float speed){
+                   std::function<uint32_t()> second_sensor, int o_kolik_je_dal_zadni, float speed){
 
     int distance_first = 0;
     int distance_second = 0;
@@ -1987,10 +1994,10 @@ void Motors::orient_to_wall_any_price(bool button_or_right, std::function<uint32
     distance_second = second_sensor();
     // std::cout<< "Distance first: " << distance_first << " , Distance second: " << distance_second <<std::endl;
 
-    if(distance_first > 800 && distance_second > 800){
+    if(distance_first > 800 && distance_second > 800 + o_kolik_je_dal_zadni){
         // std::cout<< "Jsme moc daleko, nebo nevim jak se mam srovnat"<<std::endl;
     }
-    else if((distance_first +5 > distance_second) && (distance_first -5 < distance_second) && (distance_first < 1000) && (distance_second < 1000) && (distance_first > 0 && (distance_second > 0))){
+    else if((distance_first +5 > distance_second - o_kolik_je_dal_zadni) && (distance_first -5 < distance_second - o_kolik_je_dal_zadni) && (distance_first < 1000) && (distance_second < 1000) && (distance_first > 0 && (distance_second > 0))){
         // std::cout<<"UZ jsem vyrovnanej, kaslu an to"<<std::endl;
         return;
     }
@@ -2023,7 +2030,7 @@ void Motors::orient_to_wall_any_price(bool button_or_right, std::function<uint32
         delay(50);
 
         vzdalenost_left = first_sensor();
-        vzdalenost_right = second_sensor();
+        vzdalenost_right = second_sensor() - o_kolik_je_dal_zadni;
 
         if(vzdalenost_left == 0 || vzdalenost_right == 0){
             avg_vzdalenost = 1000.0f;
@@ -2092,7 +2099,7 @@ void Motors::orient_to_wall_any_price(bool button_or_right, std::function<uint32
 
     delay(300);
 
-    orient_to_wall(button_or_right, first_sensor, second_sensor, 10);    
+    orient_to_wall(button_or_right, first_sensor, second_sensor, o_kolik_je_dal_zadni, speed);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

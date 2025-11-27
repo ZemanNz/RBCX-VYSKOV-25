@@ -637,7 +637,7 @@ void wall_following(float distance_to_drive, float speed, float distance_of_wall
  * Funkce first_sensor a second_sensor vrací hodnoty v mm ze senzorů vzdálenosti --- ultrazvuky nebo laserový s.
  */
 void orient_to_wall(bool button_or_right, std::function<uint32_t()> first_sensor, 
-                   std::function<uint32_t()> second_sensor, float speed = 10);
+                   std::function<uint32_t()> second_sensor, int o_kolik_je_dal_zadni = 0, float speed = 10);
 
 /**
  * \brief Srovnání robota podle nejbližší zdi pomocí dvou senzorů vzdálenosti
@@ -658,7 +658,7 @@ void orient_to_wall(bool button_or_right, std::function<uint32_t()> first_sensor
  */
 
 void orient_to_wall_any_price(bool button_or_right, std::function<uint32_t()> first_sensor, 
-                   std::function<uint32_t()> second_sensor, float speed = 20);
+                   std::function<uint32_t()> second_sensor, int o_kolik_je_dal_zadni = 0, float speed = 20);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**@}*/
