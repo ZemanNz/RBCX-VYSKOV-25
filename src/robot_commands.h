@@ -16,6 +16,14 @@ void zavri_zasobnik(int8_t id){
 }
 
 void otevri_vsechny_zasobniky(){
+    rkServosSetPosition(2, 0);
+    rkServosSetPosition(3, 0);// zelezny
+    rkServosSetPosition(4, 0);
+    delay(300);
+    rkServosSetPosition(2, -40);
+    rkServosSetPosition(3, -40);// zelezny
+    rkServosSetPosition(4, -40);
+    delay(300);
     rkServosSetPosition(2, -70);
     rkServosSetPosition(3, -70);// zelezny
     rkServosSetPosition(4, -70);
@@ -79,6 +87,22 @@ void ruka_top_nahoru_neb(){
 
 void ruka_dolu_neb(){
     rkSmartServoMove(0,9, 400);
+}
+
+bool je_tam_kostka_ir(){
+    int r_ir = rkIrRight();
+    std::cout<< " IR pravy: " << r_ir << std::endl;
+    if(r_ir < 150 && r_ir > 10){
+        return true;
+    }
+    return false;
+}
+
+void zavri_prepazku(){
+  rkServosSetPosition(1, -70);
+}
+void otevri_prepazku(){
+  rkServosSetPosition(1, 40);
 }
 
 
@@ -177,10 +201,11 @@ void otoc_motorem(int uhel, bool ruka_po_smeru){
 
 void nastav_ruku_na_start(){
   zavri_klepeta();
+  delay(200);
   ruka_dolu();
   otoc_motorem(100, false);
   delay(500);
-  otoc_motorem(50, true);
+  otoc_motorem(56, true);
 }
 
 void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2
@@ -227,7 +252,7 @@ void chyt_a_uloz_kostku(){
 
     delay(300);
 
-    if(r > g && r > b && r > 140){ // tohle jeste dodelatna zakladenamerenych hodnot...
+    if(r > g && r > b && r > 130){ // tohle jeste dodelatna zakladenamerenych hodnot...
         id_zasobniku = 0; // cervena je 0
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
@@ -252,7 +277,7 @@ void chyt_a_uloz_kostku(){
         ruka_dolu();
         otevri_klepata();
     }
-    if(g > r && g> b && g > 90){
+    if(g > r && g> b && g > 105){
         id_zasobniku = 1; // zelena je 1
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
         ruka_nahoru();
@@ -262,7 +287,7 @@ void chyt_a_uloz_kostku(){
         ruka_dolu();
         otevri_klepata();
     }
-    if(b > g && b> r && b > 100){
+    if(b > g && b> r && b > 110){
         id_zasobniku = 2; // modra je 2
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
@@ -283,7 +308,7 @@ void chyt_a_uloz_kostku(){
         delay(100);
         zavri_klepeta();
         ruka_dolu();
-        
+
         otevri_klepata();
 
     }
@@ -302,11 +327,12 @@ bool try_to_catch(){
     Serial.print(" R: "); Serial.print(r, 3);
     Serial.print(" G: "); Serial.print(g, 3);
     Serial.print(" B: "); Serial.println(b, 3);
-    otevri_klepata();
-    if((r > g && r > b && r > 140) || (g > r && g> b && g > 90) ||(b > g && b> r && b > 100)){
+    
+    if((r > g && r > b && r > 130) || (g > r && g> b && g > 105) ||(b > g && b> r && b > 110)){
 
         return true;
     }
+    otevri_klepata();
     delay(10);
     return false;
 }

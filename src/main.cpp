@@ -33,14 +33,13 @@ int32_t mmToTicks_right(float mm){
     return (mm / wheel_circumference_right) * prevod_motoru;
 }
 
-void jed_a_sbirej_kostky_mm(float mm, byte pocet_kostek) {
+void jed_a_sbirej_kostky_mm(float mm) {
     auto& man = rb::Manager::get();
-    int speed = 20;
+    int speed = 35;
     
     float m_kp = 0.23f; // Proporcionální konstanta
     float m_min_speed = 20.0f; // Minimální rychlost motorů
     float m_max_correction = 8.5f;
-    byte posbyrane_kostky = 0;
     // Reset pozic
     man.motor(left_id).setCurrentPosition(0);
     man.motor(right_id).setCurrentPosition(0);
@@ -52,18 +51,22 @@ void jed_a_sbirej_kostky_mm(float mm, byte pocet_kostek) {
     float progres_left = 0.0f;
     float progres_right = 0.0f;
     float rozdil_progres = 0.0f;
-    // std::cout << "Target ticks left: " << target_ticks_left << " tick right" << target_ticks_right << std::endl;
+    bool left_done = false;
+    bool right_done = false;
+
     // Základní rychlosti s přihlédnutím k polaritě
     float base_speed_left = polarity_switch_left ? -speed : speed;
     float base_speed_right = polarity_switch_right ? -speed : speed;
     
     unsigned long start_time = millis();
-    unsigned long start_time_for_try = millis();
+    unsigned long start_time_for_try = millis() - 1000;
     int timeoutMs = 30000 * (mm / 400);
     int time_to_try = 2000;
+
+    otevri_prepazku();
+    delay(500);
     
-    while((target_ticks_left > abs(left_pos) || target_ticks_right > abs(right_pos)) && 
-          (millis() - start_time < timeoutMs)) {
+    while((millis() - start_time < timeoutMs) && (target_ticks_left > abs(left_pos) || target_ticks_right > abs(right_pos))) {
         
         // Čtení pozic
         man.motor(left_id).requestInfo([&](rb::Motor& info) {
@@ -75,9 +78,6 @@ void jed_a_sbirej_kostky_mm(float mm, byte pocet_kostek) {
 
         delay(10);
 
-        // std::cout << "Left pos: " << left_pos << ", Right pos: " << right_pos << std::endl;
-        //print_wifi("Left pos: " + String(left_pos) + " Right pos: " + String(right_pos) + "\n");
-        // P regulátor - pracuje s absolutními hodnotami pozic
         progres_left = (float(abs(left_pos)) / float(target_ticks_left));
         progres_right = (float(abs(right_pos)) / float(target_ticks_right));
         rozdil_progres = progres_left - progres_right;
@@ -120,33 +120,52 @@ void jed_a_sbirej_kostky_mm(float mm, byte pocet_kostek) {
         }
         
         // Nastavení výkonu motorů
-        man.motor(left_id).speed(pctToSpeed(speed_left));
-        man.motor(right_id).speed(pctToSpeed(speed_right));
-        // std::cout << "Speed left: " << speed_left << ", Speed right: " << speed_right << std::endl;
-        //print_wifi("Speed left: " + String(speed_left) + " Speed right: " + String(speed_right) + "\n");
+        man.motor(left_id).speed(pctToSpeed(speed_left ));
+        man.motor(right_id).speed(pctToSpeed(speed_right ));
 
-        if((time_to_try < millis() - start_time_for_try) && (posbyrane_kostky < pocet_kostek)) {
+        std::cout<<"Button1: "<< digitalRead(Button1) << " Button2: " << digitalRead(Button2) << std::endl;
+
+        if((digitalRead(Button1) == LOW) && !left_done) {
+            // std::cout << "TLACITKO 1 STISKNUTO" << std::endl;
+            start_time = millis();
+            timeoutMs = 3000;
+            left_done = true;
+        }
+        if((digitalRead(Button2) == LOW) && !right_done) {
+            // std::cout << "TLACITKO 2 STISKNUTO" << std::endl;
+            start_time = millis();
+            timeoutMs = 3000;
+            right_done = true;
+        }
+        if(left_done && right_done ) {
+            // std::cout << "OBE TLACITKA Stisknuta" << std::endl;
+            delay(50);
+            break;
+        }
+
+        if(je_tam_kostka_ir()){ // je tam kostka
+            delay(400);
             man.motor(left_id).speed(0);
             man.motor(right_id).speed(0);
-            delay(100);
-            start_time_for_try = millis();
-            if(try_to_catch()){ // je tam kostka
-                chyt_a_uloz_kostku();
-            }
+            chyt_a_uloz_kostku();
         }
     }
-    
     // Zastavení motorů
     man.motor(left_id).speed(0);
     man.motor(right_id).speed(0);
     man.motor(left_id).power(0);
     man.motor(right_id).power(0);
+    if(je_tam_kostka_ir()){ // je tam kostka
+        chyt_a_uloz_kostku();
+    }
+    zavri_prepazku();
+    delay(500);
 }
 
-void jed_a_sbirej_kostky_buttons(byte pocet_kostek) {
+void jed_a_sbirej_kostky_buttons() {
     auto& man = rb::Manager::get();
-    int speed = 20;
-    int mm = pocet_kostek * 700;
+    int speed = 35;
+    int mm = 7 * 700;
     int posbyrane_kostky = 0;
     
     float m_kp = 0.23f; // Proporcionální konstanta
@@ -171,9 +190,12 @@ void jed_a_sbirej_kostky_buttons(byte pocet_kostek) {
     float base_speed_right = polarity_switch_right ? -speed : speed;
     
     unsigned long start_time = millis();
-    unsigned long start_time_for_try = millis();
+    unsigned long start_time_for_try = millis() - 1000;
     int timeoutMs = 30000 * (mm / 400);
     int time_to_try = 2000;
+
+    otevri_prepazku();
+    delay(500);
     
     while((millis() - start_time < timeoutMs)) {
         
@@ -232,6 +254,8 @@ void jed_a_sbirej_kostky_buttons(byte pocet_kostek) {
         man.motor(left_id).speed(pctToSpeed(speed_left ));
         man.motor(right_id).speed(pctToSpeed(speed_right ));
 
+        std::cout<<"Button1: "<< digitalRead(Button1) << " Button2: " << digitalRead(Button2) << std::endl;
+
         if((digitalRead(Button1) == LOW) && !left_done) {
             // std::cout << "TLACITKO 1 STISKNUTO" << std::endl;
             start_time = millis();
@@ -250,23 +274,31 @@ void jed_a_sbirej_kostky_buttons(byte pocet_kostek) {
             break;
         }
 
-        if((time_to_try < millis() - start_time_for_try) && (posbyrane_kostky < pocet_kostek)){
-            man.motor(left_id).speed(0);
-            man.motor(right_id).speed(0);
-            delay(100);
-            start_time_for_try = millis();
-            if(try_to_catch()){ // je tam kostka
+        // if((time_to_try < millis() - start_time_for_try) && (posbyrane_kostky < pocet_kostek)){
+        //     man.motor(left_id).speed(0);
+        //     man.motor(right_id).speed(0);
+        //     delay(100);
+        //     start_time_for_try = millis();
+            if(je_tam_kostka_ir()){ // je tam kostka
+                delay(400);
+                man.motor(left_id).speed(0);
+                man.motor(right_id).speed(0);
                 posbyrane_kostky++;
                 chyt_a_uloz_kostku();
             }
-        }
+        // }
     }
-    
     // Zastavení motorů
     man.motor(left_id).speed(0);
     man.motor(right_id).speed(0);
     man.motor(left_id).power(0);
     man.motor(right_id).power(0);
+    if(je_tam_kostka_ir()){ // je tam kostka
+        posbyrane_kostky++;
+        chyt_a_uloz_kostku();
+    }
+    zavri_prepazku();
+    delay(500);
 }
 
 
@@ -290,7 +322,6 @@ void setup() {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
     rkLedBlue(true);
 
     init_ruka();
@@ -298,12 +329,12 @@ void setup() {
     pinMode(21, PULLUP);
     pinMode(22, PULLUP);
 
-    Wire1.begin(21, 22, 400000);
+    Wire1.begin(21, 22, 400000);;
     Wire1.setTimeOut(1);
 
+    delay(500);
+
     rkColorSensorInit("klepeta_senzor", Wire1, tcs1);
-
-
 }
 
 void loop() {
@@ -317,33 +348,82 @@ void loop() {
         // delay(10000);
         // radius_right(200, 180, 40);
         //zavri_klepeta();
-        ruka_dolu();
-        delay(1000);
-        rkSmartServosPosicion(0);
+        // ruka_dolu();
+        // delay(1000);
+        // rkSmartServosPosicion(0);
+        // while(true){
+        //     std::cout<< " Mame kostku: " << try_to_catch();
+        //     delay(2000);
+        // }
+        zavri_prepazku();
+        delay(500);
     }
     if( rkButtonIsPressed(BTN_DOWN)) {
-        ruka_nahoru();
-        delay(1000);
-        rkSmartServosPosicion(0);
-        //otevri_klepata();
-        //zavri_vsechny_zasobniky();
-        // rkLedGreen(true);
-        // delay(2000);
-        // forward_acc(1000, 50);
-        // rkLedGreen(false);
+
+
+        rkLedGreen(true);
+        forward(20, 20);
+        radius_left(70, 90, 40);
+        jed_a_sbirej_kostky_buttons();
+        backward(180, 30);
+        turn_on_spot_left(90, 40);
+        otevri_klepata();
+        otevri_prepazku();
+        /////////////////////////////////////druha
+        jed_a_sbirej_kostky_buttons();
+        backward(120, 30);
+        turn_on_spot_left(90, 40);
+        otevri_klepata();
+        otevri_prepazku();
+        /////////////////////////////////////treti
+        jed_a_sbirej_kostky_buttons();
+        backward(180, 30);
+        turn_on_spot_left(90, 40);
+        otevri_klepata();
+        otevri_prepazku();
+        /////////////////////////////////////ctvrta
+        jed_a_sbirej_kostky_buttons();
+        backward(120, 30);
+        turn_on_spot_right(90, 40);
+        jed_a_sbirej_kostky_buttons();
+        backward(180, 30);
+        turn_on_spot_left(180,50);
+
+        otevri_klepata();
+        otevri_prepazku();
+
+
+
+        /////////////////////////////////////pata
+        jed_a_sbirej_kostky_mm(900);
+        backward(185, 30);
+        turn_on_spot_right(90, 40);
+        otevri_klepata();
+        otevri_prepazku();
+        /////////////////////////////////////sesta
+        jed_a_sbirej_kostky_buttons();
+        backward(300, 30);
+        otevri_vsechny_zasobniky();
+        forward_acc(300, 15);
+
+        rkLedGreen(false);
+
+
+
+
+
     }
     if (rkButtonIsPressed(BTN_RIGHT)) {
-        // rkLedRed(true);
-        // delay(2000);
-        // //forward(1000, 30);
-        // jed_a_sbirej_kostky(1000);
-        // rkLedRed(false);
-        //nastav_ruku_na_start();
+        rkLedBlue(true);
+
         zavri_vsechny_zasobniky();
         ruka_dolu();
         delay(1500);
         nastav_ruku_na_start();
         otevri_klepata();
+        otevri_prepazku();
+
+
         rkLedBlue(false);
     }
     if (rkButtonIsPressed(BTN_LEFT)) {
@@ -358,13 +438,15 @@ void loop() {
         //     chyt_a_uloz_kostku();
         //     delay(3000);
         // }
-        jed_a_sbirej_kostky_buttons(5);
+        //jed_a_sbirej_kostky_buttons(5);
+        otevri_prepazku();
+        delay(500);
         //chyt_a_uloz_kostku();
         // delay(2000);
         // turn_on_spot_left(180, 50);
         // delay(2000);
         // turn_on_spot_right(180, 50);
-        // rkLedYellow(false);
+        rkLedYellow(false);
 
         
     }
