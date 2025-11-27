@@ -272,7 +272,8 @@ void chyt_a_uloz_kostku(){
 
         delay(100);
 
-        zavri_klepeta();
+        rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
+
 
         ruka_dolu();
         otevri_klepata();
@@ -283,7 +284,7 @@ void chyt_a_uloz_kostku(){
         ruka_nahoru();
         otevri_klepata();
         delay(700);
-        zavri_klepeta();
+        rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
         ruka_dolu();
         otevri_klepata();
     }
@@ -306,7 +307,7 @@ void chyt_a_uloz_kostku(){
         natocit_ruku(1); // 1 je na nabirani a G
 
         delay(100);
-        zavri_klepeta();
+        rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
         ruka_dolu();
 
         otevri_klepata();

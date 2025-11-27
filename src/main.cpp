@@ -335,6 +335,13 @@ void setup() {
     delay(500);
 
     rkColorSensorInit("klepeta_senzor", Wire1, tcs1);
+
+    // while(true){
+    //     std::cout<< "Predni_ultra: " << rkUltraMeasure(2) << " mm" << std::endl;
+    //     delay(1000);
+    //     std::cout << "Zadni_ultra: " << rkUltraMeasure(1) << " mm" << std::endl;
+    //     delay(1000);
+    // }
 }
 
 void loop() {
@@ -355,54 +362,74 @@ void loop() {
         //     std::cout<< " Mame kostku: " << try_to_catch();
         //     delay(2000);
         // }
-        zavri_prepazku();
-        delay(500);
+        // zavri_prepazku();
+        // delay(500);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 20);
     }
     if( rkButtonIsPressed(BTN_DOWN)) {
 
 
         rkLedGreen(true);
-        forward(20, 20);
-        radius_left(70, 90, 40);
+        //forward(20, 20);
+        //radius_left(70, 90, 40);
+        jed_a_sbirej_kostky_buttons();
+        backward(120, 30);        
+        turn_on_spot_left(90, 40);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+        delay(100);
         jed_a_sbirej_kostky_buttons();
         backward(180, 30);
         turn_on_spot_left(90, 40);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+        delay(100);
         otevri_klepata();
         otevri_prepazku();
         /////////////////////////////////////druha
         jed_a_sbirej_kostky_buttons();
         backward(120, 30);
         turn_on_spot_left(90, 40);
+        delay(100);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+        delay(100);
         otevri_klepata();
         otevri_prepazku();
         /////////////////////////////////////treti
         jed_a_sbirej_kostky_buttons();
-        backward(180, 30);
+        backward(150, 30);
         turn_on_spot_left(90, 40);
+        delay(100);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+        delay(100);
         otevri_klepata();
         otevri_prepazku();
         /////////////////////////////////////ctvrta
         jed_a_sbirej_kostky_buttons();
         backward(120, 30);
-        turn_on_spot_right(90, 40);
-        jed_a_sbirej_kostky_buttons();
-        backward(180, 30);
-        turn_on_spot_left(180,50);
-
+        turn_on_spot_left(90, 40);
+        delay(100);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+        delay(100);
         otevri_klepata();
         otevri_prepazku();
 
-
-
         /////////////////////////////////////pata
-        jed_a_sbirej_kostky_mm(900);
-        backward(185, 30);
-        turn_on_spot_right(90, 40);
+        jed_a_sbirej_kostky_mm(700);
+
+        delay(100);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+        delay(100);
+        turn_on_spot_left(90, 40);
         otevri_klepata();
         otevri_prepazku();
         /////////////////////////////////////sesta
-        jed_a_sbirej_kostky_buttons();
-        backward(300, 30);
+        jed_a_sbirej_kostky_mm(300);
         otevri_vsechny_zasobniky();
         forward_acc(300, 15);
 
