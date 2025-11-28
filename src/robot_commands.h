@@ -247,14 +247,26 @@ void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2
     otoc_motorem(uhel, smer);
 }
 
-bool mame_porad_kostku(){
+bool mame_porad_kostku(char barva){
     float r,g,b;
     rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
     delay(50);
+
+    std::cout<< " Kontrola kostky - R: " << r << " G: " << g << " B: " << b << std::endl;
     
-    if(((r > g && r > b && r > 130) || (g > r && g> b && g > 105) ||(b > g && b> r && b > 110)) && !(r > 190 && g > 190 && b > 190)){
-        std::cout<< "Porad mame kostku" << std::endl;
-        return true;
+    if(!(r > 190 && g > 190 && b > 190)){
+        if(barva == 'R' && r > g && r > b && r > 130){
+            std::cout<< "Porad mame kostku" << std::endl;
+            return true;
+        }
+        if(barva == 'G' && g > r && g> b && g > 105){
+            std::cout<< "Porad mame kostku" << std::endl;
+            return true;
+        }
+        if(barva == 'B' && b > g && b> r && b > 110){
+            std::cout<< "Porad mame kostku" << std::endl;
+            return true;
+        }
     }
     std::cout<< "Uz nemame kostku" << std::endl;
     return false;
@@ -286,7 +298,7 @@ void chyt_a_uloz_kostku(){
 
         ruka_na_kontrolu();
 
-        if(!mame_porad_kostku()){
+        if(!mame_porad_kostku('R')){
             rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
             ruka_dolu();
             otevri_klepata();
@@ -330,7 +342,7 @@ void chyt_a_uloz_kostku(){
 
         ruka_na_kontrolu();
 
-        if(!mame_porad_kostku()){
+        if(!mame_porad_kostku('B')){
             rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
             ruka_dolu();
             otevri_klepata();
