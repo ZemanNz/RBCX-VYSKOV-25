@@ -464,15 +464,17 @@ void loop() {
         // std::cout<< "Predni_ultra: " << rkUltraMeasure(2) << " mm" << std::endl;
         // delay(1000);
         // std::cout << "Zadni_ultra: " << rkUltraMeasure(1) << " mm" << std::endl;
-        int16_t c;
-        if(rkColorSensorGetC("klepeta_senzor", &c)){
-            std::cout << "C: " << c << std::endl;
-        } else {
-            std::cout << "Chyba cteni color sensoru" << std::endl;
-        }
-        delay(1000);
+            // int16_t c;
+            // if(rkColorSensorGetC("klepeta_senzor", &c)){
+            //     std::cout << "C: " << c << std::endl;
+            // } else {
+            //     std::cout << "Chyba cteni color sensoru" << std::endl;
+            // }
+            // delay(1000);
+            chyt_a_uloz_kostku();
+            delay(5000);
 
-    }
+         }
         rkLedYellow(false);
 
         

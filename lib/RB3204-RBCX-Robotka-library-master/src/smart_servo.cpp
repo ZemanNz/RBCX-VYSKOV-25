@@ -25,41 +25,41 @@ namespace rk {
 
     void smart_servo::rkSmartServoMove(int id, int angle, int speed) {
         if (bus == nullptr) {
-            printf("Chyba: Smart servo bus není inicializován!\n");
+            //printf("Chyba: Smart servo bus není inicializován!\n");
             return;
         }
         if (angle < 0 || angle > 240) {
-            printf("Chyba: Úhel musí být v rozsahu 0–240 stupňů.\n");
+            //printf("Chyba: Úhel musí být v rozsahu 0–240 stupňů.\n");
             return;
         }
         bus->setAutoStop(id, false);
         bus->set(id, lx16a::Angle::deg(angle), speed);
-        printf("Smart Servo %d move na %d stupňů rychlostí %d\n", id, angle, speed);
+        //printf("Smart Servo %d move na %d stupňů rychlostí %d\n", id, angle, speed);
     }
 
     void smart_servo::rkSmartServoSoftMove(int id, int angle, int speed) {
         if (bus == nullptr) {
-            printf("Chyba: Smart servo bus není inicializován!\n");
+            //printf("Chyba: Smart servo bus není inicializován!\n");
             return;
         }
         if (angle < 0 || angle > 240) {
-            Serial.println("Chyba: Úhel musí být v rozsahu 0–240 stupňů.");
+            //Serial.println("Chyba: Úhel musí být v rozsahu 0–240 stupňů.");
             return;
         }
         bus->setAutoStop(id, true);
         bus->set(id, lx16a::Angle::deg(angle), speed);
-        printf("Smart Servo %d soft_move na %d stupňů rychlostí %d\n", id, angle, speed);
+        //printf("Smart Servo %d soft_move na %d stupňů rychlostí %d\n", id, angle, speed);
     }
 
     byte smart_servo::rkSmartServosPosicion(int id) {
         if (bus == nullptr) {
-            printf("Chyba: Smart servo bus není inicializován!\n");
+           // printf("Chyba: Smart servo bus není inicializován!\n");
             return 0;
         }
         float angle = bus->pos(id).deg();
         if (angle < 0) return 0;
         if (angle > 240) return 240;
-        printf("Pozice serva na id: %d je: %d\n", id, (byte)angle);
+        //printf("Pozice serva na id: %d je: %d\n", id, (byte)angle);
         return (byte)angle;
     }
 }

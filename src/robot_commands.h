@@ -77,6 +77,14 @@ void ruka_dolu(){
     }
 }
 
+void ruka_na_kontrolu(){
+    rkSmartServoMove(0,40, 600);
+    while(rkSmartServosPosicion(0) < 35){
+        rkSmartServoMove(0,40, 600);
+        delay(10);
+    }
+}
+
 void ruka_nahoru_neb(){
     rkSmartServoMove(0,185, 600);
 }
@@ -239,6 +247,19 @@ void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2
     otoc_motorem(uhel, smer);
 }
 
+bool mame_porad_kostku(){
+    float r,g,b;
+    rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
+    delay(50);
+    
+    if(((r > g && r > b && r > 130) || (g > r && g> b && g > 105) ||(b > g && b> r && b > 110)) && !(r > 190 && g > 190 && b > 190)){
+        std::cout<< "Porad mame kostku" << std::endl;
+        return true;
+    }
+    std::cout<< "Uz nemame kostku" << std::endl;
+    return false;
+}
+
 void chyt_a_uloz_kostku(){
     int start_time = millis();
     zavri_klepeta();
@@ -252,12 +273,27 @@ void chyt_a_uloz_kostku(){
 
     delay(300);
 
+    if(r > 190 && g > 190 && b > 190){ // na prazdno
+        std::cout<< "Na prazdno" << std::endl;
+        otevri_klepata();
+        delay(500);
+        return;
+    }
+
     if(r > g && r > b && r > 130){ // tohle jeste dodelatna zakladenamerenych hodnot...
         id_zasobniku = 0; // cervena je 0
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
+        ruka_na_kontrolu();
+
+        if(!mame_porad_kostku()){
+            rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
+            ruka_dolu();
+            otevri_klepata();
+            return;
+        }
+
         ruka_top_nahoru_neb();
-        delay(100);
 
         natocit_ruku(id_zasobniku);
 
@@ -292,8 +328,17 @@ void chyt_a_uloz_kostku(){
         id_zasobniku = 2; // modra je 2
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
+        ruka_na_kontrolu();
+
+        if(!mame_porad_kostku()){
+            rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
+            ruka_dolu();
+            otevri_klepata();
+            return;
+        }
+
         ruka_top_nahoru_neb();
-        delay(100);
+        // delay(100);
 
         natocit_ruku(id_zasobniku);
 
