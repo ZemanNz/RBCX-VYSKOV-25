@@ -336,12 +336,7 @@ void setup() {
 
     rkColorSensorInit("klepeta_senzor", Wire1, tcs1);
 
-    // while(true){
-    //     std::cout<< "Predni_ultra: " << rkUltraMeasure(2) << " mm" << std::endl;
-    //     delay(1000);
-    //     std::cout << "Zadni_ultra: " << rkUltraMeasure(1) << " mm" << std::endl;
-    //     delay(1000);
-    // }
+    
 }
 
 void loop() {
@@ -364,13 +359,20 @@ void loop() {
         // }
         // zavri_prepazku();
         // delay(500);
+        delay(1000);
+        jed_a_sbirej_kostky_buttons();
+        backward(120, 30);
+        turn_on_spot_left(90, 40);
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 20);
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 29);
+
+        jed_a_sbirej_kostky_buttons();
     }
     if( rkButtonIsPressed(BTN_DOWN)) {
 
 
         rkLedGreen(true);
+        delay(1000);
         //forward(20, 20);
         //radius_left(70, 90, 40);
         jed_a_sbirej_kostky_buttons();
@@ -458,21 +460,19 @@ void loop() {
         //zavri_vsechny_zasobniky();
         // ruka_nahoru();
         rkLedYellow(true);
-        delay(2000);
-        // ruka_dolu();
-        //natocit_ruku(2);
-        // for(int i=0; i<12; i++){
-        //     chyt_a_uloz_kostku();
-        //     delay(3000);
-        // }
-        //jed_a_sbirej_kostky_buttons(5);
-        otevri_prepazku();
-        delay(500);
-        //chyt_a_uloz_kostku();
-        // delay(2000);
-        // turn_on_spot_left(180, 50);
-        // delay(2000);
-        // turn_on_spot_right(180, 50);
+        while(true){
+        // std::cout<< "Predni_ultra: " << rkUltraMeasure(2) << " mm" << std::endl;
+        // delay(1000);
+        // std::cout << "Zadni_ultra: " << rkUltraMeasure(1) << " mm" << std::endl;
+        int16_t c;
+        if(rkColorSensorGetC("klepeta_senzor", &c)){
+            std::cout << "C: " << c << std::endl;
+        } else {
+            std::cout << "Chyba cteni color sensoru" << std::endl;
+        }
+        delay(1000);
+
+    }
         rkLedYellow(false);
 
         

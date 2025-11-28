@@ -458,6 +458,19 @@ bool rkColorSensorGetRGB(const char* name, float* r, float* g, float* b)
     return false;
 }
 
+bool rkColorSensorGetC(const char* name, int16_t* c)
+{
+    for (uint8_t i = 0; i < colorCount; i++) {
+        ColorSensor& s = colorSensors[i];
+        if (strcmp(s.name, name) == 0) {
+            // Načti hodnotu C
+            *c = s.tcs->read16(TCS34725_CDATAL);
+            return true;
+        }
+    }
+    return false;
+}
+
 void rkServosSetPosition(uint8_t id, float angleDegrees) {
     id -= 1;
     if (id >= rb::StupidServosCount) {

@@ -999,6 +999,24 @@ bool rkColorSensorInit(const char* name, TwoWire& bus, Adafruit_TCS34725& tcs);
  */
 bool rkColorSensorGetRGB(const char* name, float* r, float* g, float* b);
 
+/**
+ * @brief Načte hodnotu Clear (celková intenzita světla) z barevného senzoru.
+ *
+ * Funkce najde senzor podle jeho jména a pomocí Adafruit metody getRawData()
+ * přečte hodnoty R, G, B a Clear.
+ *
+ * Používáme pouze hodnotu Clear, protože představuje celkový jas:
+ *
+ * - vysoká hodnota = hodně světla nebo světlý/BLÍZKÝ objekt
+ * - nízká hodnota  = málo světla nebo tmavý/vzdálený objekt nebo NIC před senzorem
+ *
+ * @param name  Jméno senzoru (stejné jako při inicializaci).
+ * @param c     Ukazatel, kam se uloží hodnota Clear.
+ * @return true  Senzor byl nalezen a hodnota načtena.
+ * @return false Senzor nebyl nalezen.
+ */
+
+bool rkColorSensorGetC(const char* name, int16_t* c);
 
 #ifdef USE_VL53L0X // Podmíněná kompilace pro barevný senzor
 #include <Adafruit_VL53L0X.h> // Přidání této řádky

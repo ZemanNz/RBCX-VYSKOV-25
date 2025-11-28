@@ -1942,7 +1942,7 @@ void Motors::orient_to_wall(bool button_or_right, std::function<int()> first_sen
 
         int error = vzdalenost_first - vzdalenost_second;
 
-        if(abs(error) <= 5){ //nastavit
+        if(abs(error) <= 3){ //nastavit
             break;
         }
 
