@@ -78,11 +78,11 @@ struct rkConfig {
         , stupid_servo_min(-1.65f)
         , stupid_servo_max(1.65f)
         , pocet_chytrych_serv(2)
-        , enable_wifi_log(false)
+        , enable_wifi_log(true)
         , enable_wifi_control_wasd(false)
         , enable_wifi_terminal(false)
-        , wifi_ssid("robot1234")        // pro wasd a wifi_terminal je to jmeno wifi ktere robot vytvori!!! , pro logovani je to wifi ke ktere se pripoji ----> bacha to jmeno musi byt nejak dlouhy, jinak vam to nepujde prejmenovat
-        , wifi_password("1234robot") {       // pro wasd a wifi_terminal je to heslo wifi ktere robot vytvori!!! , pro logovani je to wifi ke ktere se pripoji ----> bacha to heslo musi byt nejak dlouhy, jinak vam to nepujde prejmenovat
+        , wifi_ssid("zemcom")        // pro wasd a wifi_terminal je to jmeno wifi ktere robot vytvori!!! , pro logovani je to wifi ke ktere se pripoji ----> bacha to jmeno musi byt nejak dlouhy, jinak vam to nepujde prejmenovat
+        , wifi_password("radekzeman") {       // pro wasd a wifi_terminal je to heslo wifi ktere robot vytvori!!! , pro logovani je to wifi ke ktere se pripoji ----> bacha to heslo musi byt nejak dlouhy, jinak vam to nepujde prejmenovat
     }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**

@@ -35,7 +35,7 @@ int32_t mmToTicks_right(float mm){
 
 void jed_a_sbirej_kostky_mm(float mm) {
     auto& man = rb::Manager::get();
-    int speed = 35;
+    int speed = 30;
     
     float m_kp = 0.23f; // Proporcionální konstanta
     float m_min_speed = 20.0f; // Minimální rychlost motorů
@@ -164,7 +164,7 @@ void jed_a_sbirej_kostky_mm(float mm) {
 
 void jed_a_sbirej_kostky_buttons() {
     auto& man = rb::Manager::get();
-    int speed = 35;
+    int speed = 30;
     int mm = 7 * 700;
     int posbyrane_kostky = 0;
     
@@ -387,13 +387,13 @@ void loop() {
         backward(120, 30);        
         turn_on_spot_left(90, 40);
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
         delay(100);
         jed_a_sbirej_kostky_buttons();
         backward(180, 30);
         turn_on_spot_left(90, 40);
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
         delay(100);
         otevri_klepata();
         otevri_prepazku();
@@ -403,7 +403,7 @@ void loop() {
         turn_on_spot_left(90, 40);
         delay(100);
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
         delay(100);
         otevri_klepata();
         otevri_prepazku();
@@ -413,7 +413,7 @@ void loop() {
         turn_on_spot_left(90, 40);
         delay(100);
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
         delay(100);
         otevri_klepata();
         otevri_prepazku();
@@ -423,7 +423,7 @@ void loop() {
         turn_on_spot_left(90, 40);
         delay(100);
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
         delay(100);
         otevri_klepata();
         otevri_prepazku();
@@ -433,7 +433,7 @@ void loop() {
 
         delay(100);
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 20, 15);
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
         delay(100);
         turn_on_spot_left(90, 40);
         otevri_klepata();
@@ -441,7 +441,7 @@ void loop() {
         /////////////////////////////////////sesta
         jed_a_sbirej_kostky_mm(300);
         otevri_vsechny_zasobniky();
-        forward_acc(300, 15);
+        forward_acc(240, 15);
         delay(500);
         zavri_vsechny_zasobniky();
 
@@ -489,4 +489,6 @@ void loop() {
 
         
     }
+    handleWebClients();
+    delay(40);
 }

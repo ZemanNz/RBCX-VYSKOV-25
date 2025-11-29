@@ -226,7 +226,7 @@ void nastav_ruku_na_start(){
   ruka_dolu();
   otoc_motorem(100, false);
   delay(500);
-  otoc_motorem(56, true);
+  otoc_motorem(62, true);
 }
 
 void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2
@@ -300,16 +300,20 @@ void chyt_a_uloz_kostku(){
     Serial.print(" G: "); Serial.print(g, 3);
     Serial.print(" B: "); Serial.println(b, 3);
 
+    printf_wifi(" R: %f G: %f B: %f\n", r, g, b);
+
     delay(100);
 
-    if((r > 190 && g > 190 && b > 190 )|| !(je_kostka_v_klepete())){ // na prazdno
+    handleWebClients();
+
+    if((r > 230 && g > 220 && b > 220 )|| !(je_kostka_v_klepete())){ // na prazdno
         std::cout<< "Na prazdno" << std::endl;
         otevri_klepata();
         delay(500);
         return;
     }
 
-    if(r > (g + 15) && r > (b +15)  && r > 130){ // tohle jeste dodelatna zakladenamerenych hodnot...
+    if(r > (g + 15) && r > (b +10)  && r > 130){ // tohle jeste dodelatna zakladenamerenych hodnot...
         id_zasobniku = 0; // cervena je 0
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
