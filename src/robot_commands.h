@@ -270,16 +270,16 @@ bool mame_porad_kostku(char barva){
 
         std::cout<< " Kontrola kostky - R: " << r << " G: " << g << " B: " << b << std::endl;
         
-        if(!(r > 190 && g > 190 && b > 190)){
-            if(barva == 'R' && r > g && r > b && r > 130){
+        if(!(r > 230 && g > 220 && b > 220 )){
+            if(barva == 'R' && r > g && r > b && r > 110){
                 std::cout<< "Porad mame kostku" << std::endl;
                 return true;
             }
-            if(barva == 'G' && g > r && g> b && g > 105){
+            if(barva == 'G' && g > r && g> b && g > 100){
                 std::cout<< "Porad mame kostku" << std::endl;
                 return true;
             }
-            if(barva == 'B' && b > g && b> r && b > 110){
+            if(barva == 'B' && b > g && b> r && b > 100){
                 std::cout<< "Porad mame kostku" << std::endl;
                 return true;
             }
