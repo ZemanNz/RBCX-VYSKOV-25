@@ -30,14 +30,14 @@ void otevri_vsechny_zasobniky(){
 }
 
 void zavri_vsechny_zasobniky(){
-    rkServosSetPosition(2, 85);
+    rkServosSetPosition(2, 80);
     rkServosSetPosition(3, 72);
     rkServosSetPosition(4, 85);
 }
 
 void init_ruka(){
     rkSmartServoInit(0, 3, 190, 500, 3);
-    rkSmartServoInit(1, 160, 190, 500, 3);
+    rkSmartServoInit(1, 160, 200, 120, 8); // rkSmartServoInit(1, 160, 200, 350, 4);// 8, 120
     pinMode(in1, OUTPUT);
     pinMode(in2, OUTPUT);
     pinMode(in3, OUTPUT);
@@ -49,8 +49,21 @@ void otevri_klepata(){
 }
 
 void zavri_klepeta(){
-    //rkSmartServoSoftMove(1,228,100); /// prvni test
-    rkSmartServoSoftMove(1,190,200); // test doma drevo
+    rkSmartServoSoftMove(1,200,200);
+    // while(rkSmartServosPosicion(1) < 195){
+    //     std::cout<< "Klepeta pozice: " << (int)rkSmartServosPosicion(1) << std::endl;
+    //     delay(10);
+    // }
+}
+
+bool je_kostka_v_klepete(){
+    rkSmartServoSoftMove(1,200,200);
+    delay(300);
+    std::cout<< "Klepeta pozice po dozavreni: " << (int)rkSmartServosPosicion(1) << std::endl;
+    if(rkSmartServosPosicion(1) < 196){
+        return true;
+    }
+    return false;
 }
 
 void ruka_nahoru(){
@@ -248,24 +261,28 @@ void natocit_ruku(int8_t id_zasobniku){ // // R - 0, G - 1 , B - 2
 }
 
 bool mame_porad_kostku(char barva){
-    float r,g,b;
-    rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
-    delay(50);
 
-    std::cout<< " Kontrola kostky - R: " << r << " G: " << g << " B: " << b << std::endl;
-    
-    if(!(r > 190 && g > 190 && b > 190)){
-        if(barva == 'R' && r > g && r > b && r > 130){
-            std::cout<< "Porad mame kostku" << std::endl;
-            return true;
-        }
-        if(barva == 'G' && g > r && g> b && g > 105){
-            std::cout<< "Porad mame kostku" << std::endl;
-            return true;
-        }
-        if(barva == 'B' && b > g && b> r && b > 110){
-            std::cout<< "Porad mame kostku" << std::endl;
-            return true;
+    if(je_kostka_v_klepete()){
+        std::cout<< "Kostka je v klepete, kontrola barvy" << std::endl;
+        float r,g,b;
+        rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
+        delay(50);
+
+        std::cout<< " Kontrola kostky - R: " << r << " G: " << g << " B: " << b << std::endl;
+        
+        if(!(r > 190 && g > 190 && b > 190)){
+            if(barva == 'R' && r > g && r > b && r > 130){
+                std::cout<< "Porad mame kostku" << std::endl;
+                return true;
+            }
+            if(barva == 'G' && g > r && g> b && g > 105){
+                std::cout<< "Porad mame kostku" << std::endl;
+                return true;
+            }
+            if(barva == 'B' && b > g && b> r && b > 110){
+                std::cout<< "Porad mame kostku" << std::endl;
+                return true;
+            }
         }
     }
     std::cout<< "Uz nemame kostku" << std::endl;
@@ -283,16 +300,16 @@ void chyt_a_uloz_kostku(){
     Serial.print(" G: "); Serial.print(g, 3);
     Serial.print(" B: "); Serial.println(b, 3);
 
-    delay(300);
+    delay(100);
 
-    if(r > 190 && g > 190 && b > 190){ // na prazdno
+    if((r > 190 && g > 190 && b > 190 )|| !(je_kostka_v_klepete())){ // na prazdno
         std::cout<< "Na prazdno" << std::endl;
         otevri_klepata();
         delay(500);
         return;
     }
 
-    if(r > g && r > b && r > 130){ // tohle jeste dodelatna zakladenamerenych hodnot...
+    if(r > (g + 15) && r > (b +15)  && r > 130){ // tohle jeste dodelatna zakladenamerenych hodnot...
         id_zasobniku = 0; // cervena je 0
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
@@ -326,7 +343,7 @@ void chyt_a_uloz_kostku(){
         ruka_dolu();
         otevri_klepata();
     }
-    if(g > r && g> b && g > 105){
+    if(g > (r + 11) && g> (b + 10) && g > 100){
         id_zasobniku = 1; // zelena je 1
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
         ruka_nahoru();
@@ -336,7 +353,7 @@ void chyt_a_uloz_kostku(){
         ruka_dolu();
         otevri_klepata();
     }
-    if(b > g && b> r && b > 110){
+    if(b > (g + 15) && b> (r + 15) && b > 110){
         id_zasobniku = 2; // modra je 2
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 

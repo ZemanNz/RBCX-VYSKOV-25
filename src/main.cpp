@@ -336,6 +336,14 @@ void setup() {
 
     rkColorSensorInit("klepeta_senzor", Wire1, tcs1);
 
+    // ruka_nahoru();
+    // delay(5000);
+    // ruka_dolu();
+
+    otevri_klepata();
+
+    
+
     
 }
 
@@ -434,6 +442,8 @@ void loop() {
         jed_a_sbirej_kostky_mm(300);
         otevri_vsechny_zasobniky();
         forward_acc(300, 15);
+        delay(500);
+        zavri_vsechny_zasobniky();
 
         rkLedGreen(false);
 
