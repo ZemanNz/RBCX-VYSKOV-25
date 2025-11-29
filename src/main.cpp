@@ -353,7 +353,7 @@ void loop() {
         //otoc_motorem(240, true);
         //otevri_vsechny_zasobniky();
         //natocit_ruku(1); // 1 je na nabirani a G
-        // delay(2000);
+        delay(2000);
         // radius_left(200, 180, 40);
         // delay(10000);
         // radius_right(200, 180, 40);
@@ -367,14 +367,46 @@ void loop() {
         // }
         // zavri_prepazku();
         // delay(500);
-        delay(1000);
+        // jed_a_sbirej_kostky_buttons();
+        // backward(120, 30);
+        // int vzdalenost_od_zdi = rkUltraMeasure(1);
+        // std::cout<< "Vzdalenost od zdi: " << vzdalenost_od_zdi << " mm" << std::endl;
+        // delay(50);
+        // turn_on_spot_left(90, 40);
+        // delay(100);
+        // orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+        //                      []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+        // delay(100);
+        // otevri_klepata();
+        // otevri_prepazku();
         jed_a_sbirej_kostky_buttons();
-        backward(120, 30);
-        turn_on_spot_left(90, 40);
-        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 29);
+        backward(150, 30);
 
-        jed_a_sbirej_kostky_buttons();
+        int vzdalenost_od_zdi = rkUltraMeasure(1);
+        delay(50);
+
+        if(vzdalenost_od_zdi < 90) {
+            turn_on_spot_right(30, 40);
+            backward(150, 30);
+            turn_on_spot_left(30, 40);
+            delay(100);
+            jed_a_sbirej_kostky_buttons();
+            backward(150, 30);
+        }
+        turn_on_spot_left(90, 40);
+        delay(100);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+        delay(100);
+        otevri_klepata();
+        otevri_prepazku();
+
+        /////////////////////////////////////pata
+        
+        int draha = 880 - vzdalenost_od_zdi;// 720 + 160
+        std::cout<< "Draha: " << draha << " mm" << std::endl;
+
+        jed_a_sbirej_kostky_mm(draha);
     }
     if( rkButtonIsPressed(BTN_DOWN)) {
 
@@ -420,6 +452,8 @@ void loop() {
         /////////////////////////////////////ctvrta
         jed_a_sbirej_kostky_buttons();
         backward(120, 30);
+        int vzdalenost_od_zdi = rkUltraMeasure(1);
+        delay(50);
         turn_on_spot_left(90, 40);
         delay(100);
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
@@ -429,7 +463,10 @@ void loop() {
         otevri_prepazku();
 
         /////////////////////////////////////pata
-        jed_a_sbirej_kostky_mm(700);
+        
+        int draha = 736 - vzdalenost_od_zdi;// 720 + 16
+
+        jed_a_sbirej_kostky_mm(draha);
 
         delay(100);
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
