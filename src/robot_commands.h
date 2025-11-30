@@ -44,7 +44,7 @@ void init_ruka(){
     pinMode(in4, OUTPUT);
 }
 
-void otevri_klepata(){
+void otevri_klepeta(){
     rkSmartServoMove(1,160, 300);
 }
 
@@ -309,7 +309,7 @@ void chyt_a_uloz_kostku(){
 
     if((r > 230 && g > 220 && b > 220 )|| !(je_kostka_v_klepete())){ // na prazdno
         std::cout<< "Na prazdno" << std::endl;
-        otevri_klepata();
+        otevri_klepeta();
         delay(500);
         return;
     }
@@ -323,7 +323,7 @@ void chyt_a_uloz_kostku(){
         if(!mame_porad_kostku('R')){
             rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
             ruka_dolu();
-            otevri_klepata();
+            otevri_klepeta();
             return;
         }
 
@@ -333,7 +333,7 @@ void chyt_a_uloz_kostku(){
 
         ruka_nahoru();
 
-        otevri_klepata();
+        otevri_klepeta();
         delay(500);
 
         ruka_top_nahoru_neb();
@@ -346,17 +346,17 @@ void chyt_a_uloz_kostku(){
 
 
         ruka_dolu();
-        otevri_klepata();
+        otevri_klepeta();
     }
     if(g > (r + 11) && g> (b + 10) && g > 100){
         id_zasobniku = 1; // zelena je 1
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
         ruka_nahoru();
-        otevri_klepata();
+        otevri_klepeta();
         delay(700);
         rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
         ruka_dolu();
-        otevri_klepata();
+        otevri_klepeta();
     }
     if(b > (g + 15) && b> (r + 15) && b > 110){
         id_zasobniku = 2; // modra je 2
@@ -367,7 +367,7 @@ void chyt_a_uloz_kostku(){
         if(!mame_porad_kostku('B')){
             rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
             ruka_dolu();
-            otevri_klepata();
+            otevri_klepeta();
             return;
         }
 
@@ -378,7 +378,7 @@ void chyt_a_uloz_kostku(){
 
         ruka_nahoru();
 
-        otevri_klepata();
+        otevri_klepeta();
         delay(500);
 
         ruka_top_nahoru_neb();
@@ -389,11 +389,11 @@ void chyt_a_uloz_kostku(){
         rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
         ruka_dolu();
 
-        otevri_klepata();
+        otevri_klepeta();
 
     }
 
-    otevri_klepata();
+    otevri_klepeta();
     delay(500);
 }
 
@@ -412,7 +412,7 @@ bool try_to_catch(){
 
         return true;
     }
-    otevri_klepata();
+    otevri_klepeta();
     delay(10);
     return false;
 }

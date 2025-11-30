@@ -311,7 +311,7 @@ void nachystej_se(){
     ruka_dolu();
     delay(100);
     nastav_ruku_na_start();
-    otevri_klepata();
+    otevri_klepeta();
     otevri_prepazku();
     
     rkLedBlue(false);
@@ -338,7 +338,7 @@ void vyhrej_to(){
     orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
     delay(100);
-    otevri_klepata();
+    otevri_klepeta();
     otevri_prepazku();
     /////////////////////////////////////druha
     jed_a_sbirej_kostky_buttons();
@@ -348,7 +348,7 @@ void vyhrej_to(){
     orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
     delay(100);
-    otevri_klepata();
+    otevri_klepeta();
     otevri_prepazku();
     /////////////////////////////////////treti
     jed_a_sbirej_kostky_buttons();
@@ -370,7 +370,7 @@ void vyhrej_to(){
     orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
     delay(100);
-    otevri_klepata();
+    otevri_klepeta();
     otevri_prepazku();
     /////////////////////////////////////ctvrta
     jed_a_sbirej_kostky_buttons();
@@ -382,7 +382,7 @@ void vyhrej_to(){
     orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
     delay(100);
-    otevri_klepata();
+    otevri_klepeta();
     otevri_prepazku();
     /////////////////////////////////////pata
 
@@ -405,7 +405,7 @@ void vyhrej_to(){
     vzdalenost_od_zdi = rkUltraMeasure(1);
     delay(50);
     turn_on_spot_left(90, 40);
-    otevri_klepata();
+    otevri_klepeta();
     otevri_prepazku();
     /////////////////////////////////////sesta
     draha = 470 - vzdalenost_od_zdi;// 720 + 160
@@ -457,7 +457,7 @@ void setup() {
     // delay(5000);
     // ruka_dolu();
 
-    otevri_klepata();
+    otevri_klepeta();
 
     
 
@@ -494,7 +494,7 @@ void loop() {
         // orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
         //                      []() -> uint32_t { return rkUltraMeasure(2); }, 28);
         // delay(100);
-        // otevri_klepata();
+        // otevri_klepeta();
         // otevri_prepazku();
         jed_a_sbirej_kostky_buttons();
         backward(150, 30);
@@ -515,7 +515,7 @@ void loop() {
         orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
                              []() -> uint32_t { return rkUltraMeasure(2); }, 28);
         delay(100);
-        otevri_klepata();
+        otevri_klepeta();
         otevri_prepazku();
 
         /////////////////////////////////////pata
