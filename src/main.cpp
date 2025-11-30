@@ -520,7 +520,7 @@ void loop() {
 
         /////////////////////////////////////pata
         
-        int draha = 880 - vzdalenost_od_zdi;// 720 + 160
+        int draha = 880 - vzdalenost_od_zdi;// 720 + 160 
         std::cout<< "Draha: " << draha << " mm" << std::endl;
 
         jed_a_sbirej_kostky_mm(draha, true);
