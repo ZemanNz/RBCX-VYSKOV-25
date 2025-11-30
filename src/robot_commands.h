@@ -300,11 +300,12 @@ void chyt_a_uloz_kostku(){
     Serial.print(" G: "); Serial.print(g, 3);
     Serial.print(" B: "); Serial.println(b, 3);
 
-    printf_wifi(" R: %f G: %f B: %f\n", r, g, b);
+    
+    //printf_wifi(" R: %f G: %f B: %f\n", r, g, b);
 
     delay(100);
 
-    handleWebClients();
+    //handleWebClients();
 
     if((r > 230 && g > 220 && b > 220 )|| !(je_kostka_v_klepete())){ // na prazdno
         std::cout<< "Na prazdno" << std::endl;

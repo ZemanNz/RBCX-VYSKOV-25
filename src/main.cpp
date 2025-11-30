@@ -301,6 +301,104 @@ void jed_a_sbirej_kostky_buttons() {
     delay(500);
 }
 
+void nachystej_se(){
+    rkLedBlue(true);
+
+    zavri_vsechny_zasobniky();
+    ruka_dolu();
+    delay(100);
+    nastav_ruku_na_start();
+    otevri_klepata();
+    otevri_prepazku();
+    
+    rkLedBlue(false);
+
+}
+
+void vyhrej_to(){
+    rkLedGreen(true);
+    delay(1000);
+    //forward(20, 20);
+    //radius_left(70, 90, 40);
+    jed_a_sbirej_kostky_buttons();
+    backward(120, 30);        
+    turn_on_spot_left(90, 40);
+    orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                         []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+    delay(100);
+    jed_a_sbirej_kostky_buttons();
+    backward(180, 30);
+    turn_on_spot_left(90, 40);
+    orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                         []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+    delay(100);
+    otevri_klepata();
+    otevri_prepazku();
+    /////////////////////////////////////druha
+    jed_a_sbirej_kostky_buttons();
+    backward(120, 30);
+    turn_on_spot_left(90, 40);
+    delay(100);
+    orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                         []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+    delay(100);
+    otevri_klepata();
+    otevri_prepazku();
+    /////////////////////////////////////treti
+    jed_a_sbirej_kostky_buttons();
+    backward(150, 30);
+    int vzdalenost_od_zdi = rkUltraMeasure(1);
+    delay(50);
+
+    if(vzdalenost_od_zdi < 90) { // do toho vzdalenyho rohu
+        turn_on_spot_right(30, 40);
+        backward(150, 30);
+        turn_on_spot_left(30, 40);
+        delay(100);
+        jed_a_sbirej_kostky_buttons();
+        backward(150, 30);
+    }
+        
+    turn_on_spot_left(90, 40);
+    delay(100);
+    orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                         []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+    delay(100);
+    otevri_klepata();
+    otevri_prepazku();
+    /////////////////////////////////////ctvrta
+    jed_a_sbirej_kostky_buttons();
+    backward(120, 30);
+    int vzdalenost_od_zdi = rkUltraMeasure(1);
+    delay(50);
+    turn_on_spot_left(90, 40);
+    delay(100);
+    orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                         []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+    delay(100);
+    otevri_klepata();
+    otevri_prepazku();
+    /////////////////////////////////////pata
+      
+    int draha = 880 - vzdalenost_od_zdi;// 720 + 160
+    jed_a_sbirej_kostky_mm(draha);
+
+    delay(100);
+    orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                         []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+    delay(100);
+    turn_on_spot_left(90, 40);
+    otevri_klepata();
+    otevri_prepazku();
+    /////////////////////////////////////sesta
+    jed_a_sbirej_kostky_mm(300);
+    otevri_vsechny_zasobniky();
+    forward_acc(240, 15);
+    delay(500);
+    zavri_vsechny_zasobniky();
+    rkLedGreen(false);
+
+}
 
 
 void setup() {
@@ -385,7 +483,7 @@ void loop() {
         int vzdalenost_od_zdi = rkUltraMeasure(1);
         delay(50);
 
-        if(vzdalenost_od_zdi < 90) {
+        if(vzdalenost_od_zdi < 90) { // do toho vzdalenyho rohu
             turn_on_spot_right(30, 40);
             backward(150, 30);
             turn_on_spot_left(30, 40);
@@ -409,98 +507,11 @@ void loop() {
         jed_a_sbirej_kostky_mm(draha);
     }
     if( rkButtonIsPressed(BTN_DOWN)) {
-
-
-        rkLedGreen(true);
-        delay(1000);
-        //forward(20, 20);
-        //radius_left(70, 90, 40);
-        jed_a_sbirej_kostky_buttons();
-        backward(120, 30);        
-        turn_on_spot_left(90, 40);
-        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
-        delay(100);
-        jed_a_sbirej_kostky_buttons();
-        backward(180, 30);
-        turn_on_spot_left(90, 40);
-        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
-        delay(100);
-        otevri_klepata();
-        otevri_prepazku();
-        /////////////////////////////////////druha
-        jed_a_sbirej_kostky_buttons();
-        backward(120, 30);
-        turn_on_spot_left(90, 40);
-        delay(100);
-        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
-        delay(100);
-        otevri_klepata();
-        otevri_prepazku();
-        /////////////////////////////////////treti
-        jed_a_sbirej_kostky_buttons();
-        backward(150, 30);
-        turn_on_spot_left(90, 40);
-        delay(100);
-        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
-        delay(100);
-        otevri_klepata();
-        otevri_prepazku();
-        /////////////////////////////////////ctvrta
-        jed_a_sbirej_kostky_buttons();
-        backward(120, 30);
-        int vzdalenost_od_zdi = rkUltraMeasure(1);
-        delay(50);
-        turn_on_spot_left(90, 40);
-        delay(100);
-        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
-        delay(100);
-        otevri_klepata();
-        otevri_prepazku();
-
-        /////////////////////////////////////pata
-        
-        int draha = 736 - vzdalenost_od_zdi;// 720 + 16
-
-        jed_a_sbirej_kostky_mm(draha);
-
-        delay(100);
-        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-                             []() -> uint32_t { return rkUltraMeasure(2); }, 28);
-        delay(100);
-        turn_on_spot_left(90, 40);
-        otevri_klepata();
-        otevri_prepazku();
-        /////////////////////////////////////sesta
-        jed_a_sbirej_kostky_mm(300);
-        otevri_vsechny_zasobniky();
-        forward_acc(240, 15);
-        delay(500);
-        zavri_vsechny_zasobniky();
-
-        rkLedGreen(false);
-
-
-
-
+        vyhrej_to();
 
     }
     if (rkButtonIsPressed(BTN_RIGHT)) {
-        rkLedBlue(true);
-
-        zavri_vsechny_zasobniky();
-        ruka_dolu();
-        delay(1500);
-        nastav_ruku_na_start();
-        otevri_klepata();
-        otevri_prepazku();
-
-
-        rkLedBlue(false);
+        nachystej_se();
     }
     if (rkButtonIsPressed(BTN_LEFT)) {
         
@@ -526,6 +537,5 @@ void loop() {
 
         
     }
-    handleWebClients();
     delay(40);
 }
