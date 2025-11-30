@@ -33,7 +33,7 @@ int32_t mmToTicks_right(float mm){
     return (mm / wheel_circumference_right) * prevod_motoru;
 }
 
-void jed_a_sbirej_kostky_mm(float mm) {
+void jed_a_sbirej_kostky_mm(float mm, bool sbirej) {
     auto& man = rb::Manager::get();
     int speed = 30;
     
@@ -143,7 +143,7 @@ void jed_a_sbirej_kostky_mm(float mm) {
             break;
         }
 
-        if(je_tam_kostka_ir()){ // je tam kostka
+        if(je_tam_kostka_ir() && sbirej){ // je tam kostka
             delay(400);
             man.motor(left_id).speed(0);
             man.motor(right_id).speed(0);
@@ -155,7 +155,7 @@ void jed_a_sbirej_kostky_mm(float mm) {
     man.motor(right_id).speed(0);
     man.motor(left_id).power(0);
     man.motor(right_id).power(0);
-    if(je_tam_kostka_ir()){ // je tam kostka
+    if(je_tam_kostka_ir() && sbirej){ // je tam kostka
         chyt_a_uloz_kostku();
     }
     zavri_prepazku();
@@ -317,6 +317,9 @@ void nachystej_se(){
 
 void vyhrej_to(){
     rkLedGreen(true);
+    bool sbirej = true;
+    int start_time = millis();
+    /////////////////////////////////////prvni
     delay(1000);
     //forward(20, 20);
     //radius_left(70, 90, 40);
@@ -327,7 +330,7 @@ void vyhrej_to(){
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
     delay(100);
     jed_a_sbirej_kostky_buttons();
-    backward(180, 30);
+    backward(150, 30);
     turn_on_spot_left(90, 40);
     orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
@@ -369,7 +372,7 @@ void vyhrej_to(){
     /////////////////////////////////////ctvrta
     jed_a_sbirej_kostky_buttons();
     backward(120, 30);
-    int vzdalenost_od_zdi = rkUltraMeasure(1);
+    vzdalenost_od_zdi = rkUltraMeasure(1);
     delay(50);
     turn_on_spot_left(90, 40);
     delay(100);
@@ -379,24 +382,37 @@ void vyhrej_to(){
     otevri_klepata();
     otevri_prepazku();
     /////////////////////////////////////pata
+
+    int time_od_startu = millis() - start_time;
+    std::cout<< "Cas od startu: " << time_od_startu << " ms" << std::endl;
+
+    if(time_od_startu > 150000){ // 2.5 minuty --- dojet to stihne za 20 sekund
+        std::cout<< "Musim rychle dojet" << std::endl;
+        sbirej = false;
+        rkLedRed(true);
+    }
       
     int draha = 880 - vzdalenost_od_zdi;// 720 + 160
-    jed_a_sbirej_kostky_mm(draha);
+    jed_a_sbirej_kostky_mm(draha ,sbirej);
 
     delay(100);
     orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
     delay(100);
+    vzdalenost_od_zdi = rkUltraMeasure(1);
+    delay(50);
     turn_on_spot_left(90, 40);
     otevri_klepata();
     otevri_prepazku();
     /////////////////////////////////////sesta
-    jed_a_sbirej_kostky_mm(300);
+    draha = 470 - vzdalenost_od_zdi;// 720 + 160
+    jed_a_sbirej_kostky_mm(draha, sbirej);
     otevri_vsechny_zasobniky();
     forward_acc(240, 15);
     delay(500);
     zavri_vsechny_zasobniky();
     rkLedGreen(false);
+    rkLedRed(false);
 
 }
 
@@ -504,7 +520,7 @@ void loop() {
         int draha = 880 - vzdalenost_od_zdi;// 720 + 160
         std::cout<< "Draha: " << draha << " mm" << std::endl;
 
-        jed_a_sbirej_kostky_mm(draha);
+        jed_a_sbirej_kostky_mm(draha, true);
     }
     if( rkButtonIsPressed(BTN_DOWN)) {
         vyhrej_to();
