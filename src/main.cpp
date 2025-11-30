@@ -36,6 +36,9 @@ int32_t mmToTicks_right(float mm){
 void jed_a_sbirej_kostky_mm(float mm, bool sbirej) {
     auto& man = rb::Manager::get();
     int speed = 30;
+    if(sbirej == false){
+        speed = 50;
+    }
     
     float m_kp = 0.23f; // Proporcionální konstanta
     float m_min_speed = 20.0f; // Minimální rychlost motorů
