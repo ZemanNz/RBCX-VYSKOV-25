@@ -17,15 +17,15 @@ Adafruit_TCS34725 tcs1 = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS347
 float r1, g1, b1;
 
 TaskHandle_t taskChytHandle = NULL;
-bool taskRunning = false;
+SemaphoreHandle_t chytaniSemafor = NULL;
 
 // task spouští chyt_a_uloz_kostku a po skončení se ukončí a vyčistí handle
 void taskChytAUlozKostku(void *pvParameters) {
     chyt_a_uloz_kostku();
 
     // signalizace skončení
-    taskRunning = false;
     taskChytHandle = NULL;
+    xSemaphoreGive(chytaniSemafor); // Uvolnění zámku, aby mohl běžet další task
 
     vTaskDelete(NULL); // smaže sebe
 }
@@ -290,12 +290,6 @@ void jed_a_sbirej_kostky_buttons() {
             delay(50);
             break;
         }
-
-        // if((time_to_try < millis() - start_time_for_try) && (posbyrane_kostky < pocet_kostek)){
-        //     man.motor(left_id).speed(0);
-        //     man.motor(right_id).speed(0);
-        //     delay(100);
-        //     start_time_for_try = millis();
             if(je_tam_kostka_ir()){ // je tam kostka
                 delay(400);
                 man.motor(left_id).speed(0);
@@ -434,10 +428,10 @@ void jed_a_sbirej_kostky_buttons_fast() {
         //     delay(100);
         //     start_time_for_try = millis();
             if(je_tam_kostka_ir()){ // je tam kostka
-                    posbyrane_kostky++;
-                    if(!taskRunning && taskChytHandle == NULL) {
-                        taskRunning = true;
-                        BaseType_t res = xTaskCreatePinnedToCore(
+                posbyrane_kostky++;
+                // Pokusíme se získat zámek. Pokud uspějeme, můžeme spustit task.
+                if (xSemaphoreTake(chytaniSemafor, 0) == pdTRUE) {
+                    BaseType_t res = xTaskCreatePinnedToCore(
                             taskChytAUlozKostku,      // Funkce tasku
                             "ChytKostku",             // Jméno tasku
                             4096,                     // Stack size (slova, ne bajty)
@@ -447,9 +441,9 @@ void jed_a_sbirej_kostky_buttons_fast() {
                             0                         // Core
                         );
                         if(res != pdPASS){
-                            // selhalo vytvoření tasku -> rollback
-                            taskRunning = false;
+                            // selhalo vytvoření tasku -> uvolni zámek
                             taskChytHandle = NULL;
+                            xSemaphoreGive(chytaniSemafor);
                             std::cout << "ERROR: task create failed" << std::endl;
                         }
                 }
@@ -497,7 +491,7 @@ void vyhrej_to_rychlejsi(){// rychlejsi v rohach asinchroni sbirani hostek
     
     backward(dozadu_kratce, 30);        
     turn_on_spot_left(90, 40);
-    // delay(1000);
+    delay(1000);
     orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
     delay(100);
@@ -609,7 +603,8 @@ void vyhrej_to_zvl_pozice(){// startujeme z jinyho natoceni
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
     delay(100);
     otevri_klepeta();
-    otevri_prepazku();
+    otevri_prepazku(); 
+    
     /////////////////////////////////////treti
     jed_a_sbirej_kostky_buttons();
     backward(dozadu_dlouze, 30);
@@ -819,9 +814,8 @@ void setup() {
 
     otevri_klepeta();
 
-    
-
-    
+    chytaniSemafor = xSemaphoreCreateBinary();
+    xSemaphoreGive(chytaniSemafor); 
 }
 
 void loop() {

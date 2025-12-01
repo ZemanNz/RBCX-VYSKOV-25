@@ -77,12 +77,12 @@ void zavri_zasobnik(int8_t id){
 void otevri_vsechny_zasobniky(){
     rkServosSetPosition(2, 0);
     rkServosSetPosition(3, 0);// zelezny
-    rkServosSetPosition(4, 0);
-    delay(300);
+    rkServosSetPosition(4, 0); 
+    vTaskDelay(pdMS_TO_TICKS(300));
     rkServosSetPosition(2, -40);
-    rkServosSetPosition(3, -40);// zelezny
-    rkServosSetPosition(4, -40);
-    delay(300);
+    rkServosSetPosition(3, -40);
+    rkServosSetPosition(4, -40); 
+    vTaskDelay(pdMS_TO_TICKS(300));
     rkServosSetPosition(2, -70);
     rkServosSetPosition(3, -70);// zelezny
     rkServosSetPosition(4, -70);
@@ -109,9 +109,9 @@ void otevri_klepeta(){
 
 void zavri_klepeta(){
     rkSmartServoSoftMove(1,200,200);
-    // while(rkSmartServosPosicion(1) < 195){
+    // while(rkSmartServosPosicion(1) < 195){ // Tento cyklus může být blokující, zvažte jeho použití
     //     std::cout<< "Klepeta pozice: " << (int)rkSmartServosPosicion(1) << std::endl;
-    //     delay(10);
+    //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 }
 
@@ -119,18 +119,18 @@ void zavri_klepeta(){
 void measure_color(){
     while(true){
         zavri_klepeta();
-        delay(1000);
+        vTaskDelay(pdMS_TO_TICKS(1000));
         rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b);
-        delay(100);
+        vTaskDelay(pdMS_TO_TICKS(100));
         std::cout<< " Mereni barev - R: " << r << " G: " << g << " B: " << b << std::endl;
         otevri_klepeta();
-        delay(4000);
+        vTaskDelay(pdMS_TO_TICKS(4000));
     }
 }
 
 bool je_kostka_v_klepete(){
     rkSmartServoSoftMove(1,200,200);
-    delay(300);
+    vTaskDelay(pdMS_TO_TICKS(300));
     std::cout<< "Klepeta pozice po dozavreni: " << (int)rkSmartServosPosicion(1) << std::endl;
     if(rkSmartServosPosicion(1) < 196){
         return true;
@@ -141,39 +141,39 @@ bool je_kostka_v_klepete(){
 void ruka_nahoru(){
     rkSmartServoMove(0,185, 600);
     while(rkSmartServosPosicion(0) < 180){
-        rkSmartServoMove(0,185, 600);
-        delay(10);
+        // rkSmartServoMove(0,185, 600); // Opakované volání není nutné, servo se hýbe samo
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
 void ruka_top_nahoru(){
     rkSmartServoMove(0,170, 600);
     while(rkSmartServosPosicion(0) < 165){
-        rkSmartServoMove(0,170, 600);
-        delay(10);
+        // rkSmartServoMove(0,170, 600);
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
 void ruka_dolu(){
     rkSmartServoMove(0,9, 400);
     while(rkSmartServosPosicion(0) > 10){
-        rkSmartServoMove(0,9, 400);
-        delay(10);
+        // rkSmartServoMove(0,9, 400);
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
 void ruka_na_kontrolu(){
     rkSmartServoMove(0,40, 600);
     while(rkSmartServosPosicion(0) < 35){
-        rkSmartServoMove(0,40, 600);
-        delay(10);
+        // rkSmartServoMove(0,40, 600);
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
 void ruka_nahoru_neb(){
     rkSmartServoMove(0,185, 600);
 }
-
+ 
 void ruka_top_nahoru_neb(){
     rkSmartServoMove(0,170, 600);
 }
@@ -204,56 +204,56 @@ void krok1(){
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
-  delay(rychlost);
+  vTaskDelay(pdMS_TO_TICKS(rychlost));
 }
 void krok2(){
   digitalWrite(in1, HIGH);
   digitalWrite(in2, HIGH);
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
-  delay(rychlost);
+  vTaskDelay(pdMS_TO_TICKS(rychlost));
 }
 void krok3(){
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
-  delay(rychlost);
+  vTaskDelay(pdMS_TO_TICKS(rychlost));
 }
 void krok4(){
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  delay(rychlost);
+  vTaskDelay(pdMS_TO_TICKS(rychlost));
 }
 void krok5(){
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  delay(rychlost);
+  vTaskDelay(pdMS_TO_TICKS(rychlost));
 }
 void krok6(){
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
   digitalWrite(in3, HIGH);
   digitalWrite(in4, HIGH);
-  delay(rychlost);
+  vTaskDelay(pdMS_TO_TICKS(rychlost));
 }
 void krok7(){
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  delay(rychlost);
+  vTaskDelay(pdMS_TO_TICKS(rychlost));
 }
 void krok8(){
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  delay(rychlost);
+  vTaskDelay(pdMS_TO_TICKS(rychlost));
 }
 
 void rotacePoSmeru() {
@@ -294,10 +294,10 @@ void otoc_motorem(int uhel, bool ruka_po_smeru){
 
 void nastav_ruku_na_start(){
   zavri_klepeta();
-  delay(200);
+  vTaskDelay(pdMS_TO_TICKS(200));
   ruka_dolu();
   otoc_motorem(100, false);
-  delay(500);
+  vTaskDelay(pdMS_TO_TICKS(500));
   otoc_motorem(62, true);
 }
 
@@ -338,7 +338,7 @@ bool mame_porad_kostku(char barva){
         std::cout<< "Kostka je v klepete, kontrola barvy" << std::endl;
         
         rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
-        delay(50);
+        vTaskDelay(pdMS_TO_TICKS(50));
 
         std::cout<< " Kontrola kostky - R: " << r << " G: " << g << " B: " << b << std::endl;
         
@@ -364,24 +364,24 @@ bool mame_porad_kostku(char barva){
 void chyt_a_uloz_kostku(){
     int start_time = millis();
     zavri_klepeta();
-    delay(500);
+    vTaskDelay(pdMS_TO_TICKS(500));
     int8_t id_zasobniku = 5; // R - 0, G - 1 , B - 2
     rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
     Serial.print(" R: "); Serial.print(r, 3);
     Serial.print(" G: "); Serial.print(g, 3);
     Serial.print(" B: "); Serial.println(b, 3);
 
-    
+
     //printf_wifi(" R: %f G: %f B: %f\n", r, g, b);
 
-    delay(100);
+    vTaskDelay(pdMS_TO_TICKS(100));
 
     //handleWebClients();
 
     if((prazdno())|| !(je_kostka_v_klepete())){ // na prazdno
         std::cout<< "Na prazdno" << std::endl;
         otevri_klepeta();
-        delay(500);
+        vTaskDelay(pdMS_TO_TICKS(500));
         return;
     }
 
@@ -407,13 +407,13 @@ void chyt_a_uloz_kostku(){
         ruka_nahoru();
 
         otevri_klepeta();
-        delay(500);
+        vTaskDelay(pdMS_TO_TICKS(500));
 
         ruka_top_nahoru_neb();
 
         natocit_ruku(1); // 1 je na nabirani a G
 
-        delay(100);
+        vTaskDelay(pdMS_TO_TICKS(100));
 
         rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
 
@@ -426,7 +426,7 @@ void chyt_a_uloz_kostku(){
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
         ruka_nahoru();
         otevri_klepeta();
-        delay(700);
+        vTaskDelay(pdMS_TO_TICKS(700));
         rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
         ruka_dolu();
         otevri_klepeta();
@@ -445,37 +445,37 @@ void chyt_a_uloz_kostku(){
         }
 
         ruka_top_nahoru_neb();
-        // delay(100);
+        // vTaskDelay(pdMS_TO_TICKS(100));
 
         natocit_ruku(id_zasobniku);
 
         ruka_nahoru();
 
         otevri_klepeta();
-        delay(500);
+        vTaskDelay(pdMS_TO_TICKS(500));
 
         ruka_top_nahoru_neb();
 
         natocit_ruku(1); // 1 je na nabirani a G
 
-        delay(100);
+        vTaskDelay(pdMS_TO_TICKS(100));
         rkSmartServoMove(1,170, 300); // mirnr zavri klepeta
         ruka_dolu();
 
         otevri_klepeta();
 
     }
-
+ 
     otevri_klepeta();
-    delay(500);
+    vTaskDelay(pdMS_TO_TICKS(500));
 }
 
 
 bool try_to_catch(){
     zavri_klepeta();
-    delay(600);
+    vTaskDelay(pdMS_TO_TICKS(600));
     rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
-    delay(100);
+    vTaskDelay(pdMS_TO_TICKS(100));
     Serial.print(" R: "); Serial.print(r, 3);
     Serial.print(" G: "); Serial.print(g, 3);
     Serial.print(" B: "); Serial.println(b, 3);
@@ -485,6 +485,6 @@ bool try_to_catch(){
         return true;
     }
     otevri_klepeta();
-    delay(10);
+    vTaskDelay(pdMS_TO_TICKS(10));
     return false;
 }
