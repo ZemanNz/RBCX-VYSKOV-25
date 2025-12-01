@@ -7,6 +7,65 @@ const int in3 =  27;
 const int in4 =  14;
 int rychlost = 1; // vetsi cislo = nizsi rychlost
 
+
+
+/////////////////////////////////////////////////////////////////////////////////////nastavovani rgb
+float r,g,b;
+
+bool prazdno(){
+    if( (r > 210 && g > 210 && b > 210)){
+        return true;
+    }
+    return false;
+}
+
+bool is_red_detected(){
+    if((r > (g + 15)) && (r > (b +10))  && (r > 130)){
+        return true;
+    }
+    return false;
+}
+bool is_green_detected(){
+    if((g > (r + 11)) && (g> (b + 10)) && (g > 100)){
+        return true;
+    }
+    return false;
+}
+
+bool is_blue_detected (){
+    if((b > (g + 15)) && (b> (r + 15)) && (b > 110)){
+        return true;
+    }
+    return false;
+}
+    
+bool is_still_red_detected(){
+    if(r > g && r > b && r > 110){
+        return true;
+    }
+    return false;
+}
+
+bool is_still_green_detected(){
+    if((g > r && g > b && g > 100)){
+        return true;
+    }
+    return false;
+}
+
+bool is_still_blue_detected(){
+    if(b > g && b > r && b > 100){
+        return true;
+    }
+    return false;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 void otevri_zasobnik(int8_t id){
     rkServosSetPosition(id, -70);
 }
@@ -30,7 +89,7 @@ void otevri_vsechny_zasobniky(){
 }
 
 void zavri_vsechny_zasobniky(){
-    rkServosSetPosition(2, 80);
+    rkServosSetPosition(2, 90);
     rkServosSetPosition(3, 72);
     rkServosSetPosition(4, 85);
 }
@@ -54,6 +113,19 @@ void zavri_klepeta(){
     //     std::cout<< "Klepeta pozice: " << (int)rkSmartServosPosicion(1) << std::endl;
     //     delay(10);
     // }
+}
+
+// jeste dodela funkce na mereni barev
+void measure_color(){
+    while(true){
+        zavri_klepeta();
+        delay(1000);
+        rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b);
+        delay(100);
+        std::cout<< " Mereni barev - R: " << r << " G: " << g << " B: " << b << std::endl;
+        otevri_klepeta();
+        delay(4000);
+    }
 }
 
 bool je_kostka_v_klepete(){
@@ -264,22 +336,22 @@ bool mame_porad_kostku(char barva){
 
     if(je_kostka_v_klepete()){
         std::cout<< "Kostka je v klepete, kontrola barvy" << std::endl;
-        float r,g,b;
+        
         rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
         delay(50);
 
         std::cout<< " Kontrola kostky - R: " << r << " G: " << g << " B: " << b << std::endl;
         
-        if(!(r > 230 && g > 220 && b > 220 )){
-            if(barva == 'R' && r > g && r > b && r > 110){
+        if(!(prazdno())){
+            if(barva == 'R' && is_still_red_detected()){
                 std::cout<< "Porad mame kostku" << std::endl;
                 return true;
             }
-            if(barva == 'G' && g > r && g> b && g > 100){
+            if(barva == 'G' && is_still_green_detected()){
                 std::cout<< "Porad mame kostku" << std::endl;
                 return true;
             }
-            if(barva == 'B' && b > g && b> r && b > 100){
+            if(barva == 'B' && is_still_blue_detected()){
                 std::cout<< "Porad mame kostku" << std::endl;
                 return true;
             }
@@ -294,7 +366,6 @@ void chyt_a_uloz_kostku(){
     zavri_klepeta();
     delay(500);
     int8_t id_zasobniku = 5; // R - 0, G - 1 , B - 2
-    float r,g,b;
     rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
     Serial.print(" R: "); Serial.print(r, 3);
     Serial.print(" G: "); Serial.print(g, 3);
@@ -307,14 +378,16 @@ void chyt_a_uloz_kostku(){
 
     //handleWebClients();
 
-    if((r > 230 && g > 220 && b > 220 )|| !(je_kostka_v_klepete())){ // na prazdno
+    if((prazdno())|| !(je_kostka_v_klepete())){ // na prazdno
         std::cout<< "Na prazdno" << std::endl;
         otevri_klepeta();
         delay(500);
         return;
     }
 
-    if(r > (g + 15) && r > (b +10)  && r > 130){ // tohle jeste dodelatna zakladenamerenych hodnot...
+    std::cout<< "Jdem se roozhodovat " << std::endl;
+
+    if(is_red_detected()){ // tohle jeste dodelatna zakladenamerenych hodnot...
         id_zasobniku = 0; // cervena je 0
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
@@ -348,7 +421,7 @@ void chyt_a_uloz_kostku(){
         ruka_dolu();
         otevri_klepeta();
     }
-    if(g > (r + 11) && g> (b + 10) && g > 100){
+    if(is_green_detected()){
         id_zasobniku = 1; // zelena je 1
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
         ruka_nahoru();
@@ -358,7 +431,7 @@ void chyt_a_uloz_kostku(){
         ruka_dolu();
         otevri_klepeta();
     }
-    if(b > (g + 15) && b> (r + 15) && b > 110){
+    if(is_blue_detected()){
         id_zasobniku = 2; // modra je 2
         std::cout<< "Zasobnik ID: " << (int)id_zasobniku << std::endl;
 
@@ -401,14 +474,13 @@ void chyt_a_uloz_kostku(){
 bool try_to_catch(){
     zavri_klepeta();
     delay(600);
-    float r,g,b;
     rkColorSensorGetRGB("klepeta_senzor", &r, &g, &b); // je potreba inicializovat v setup
     delay(100);
     Serial.print(" R: "); Serial.print(r, 3);
     Serial.print(" G: "); Serial.print(g, 3);
     Serial.print(" B: "); Serial.println(b, 3);
     
-    if((r > g && r > b && r > 130) || (g > r && g> b && g > 105) ||(b > g && b> r && b > 110)){
+    if(is_still_red_detected() || is_still_green_detected() || is_still_blue_detected()){
 
         return true;
     }
