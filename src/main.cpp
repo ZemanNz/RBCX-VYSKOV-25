@@ -16,6 +16,20 @@ byte Button2;
 Adafruit_TCS34725 tcs1 = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 float r1, g1, b1;
 
+TaskHandle_t taskChytHandle = NULL;
+bool taskRunning = false;
+
+// task spouští chyt_a_uloz_kostku a po skončení se ukončí a vyčistí handle
+void taskChytAUlozKostku(void *pvParameters) {
+    chyt_a_uloz_kostku();
+
+    // signalizace skončení
+    taskRunning = false;
+    taskChytHandle = NULL;
+
+    vTaskDelete(NULL); // smaže sebe
+}
+
 
 int16_t pctToSpeed(float pct) {
     pct = rb::clamp(pct, -100.0f, 100.0f);
@@ -304,7 +318,7 @@ void jed_a_sbirej_kostky_buttons() {
     delay(500);
 }
 
-void jed_a_sbirej_kostky_buttons_fast(byte pocet_kostek) {
+void jed_a_sbirej_kostky_buttons_fast() {
     auto& man = rb::Manager::get();
     int speed = 30;
     int mm = 7 * 700;
@@ -396,8 +410,6 @@ void jed_a_sbirej_kostky_buttons_fast(byte pocet_kostek) {
         man.motor(left_id).speed(pctToSpeed(speed_left ));
         man.motor(right_id).speed(pctToSpeed(speed_right ));
 
-        std::cout<<"Button1: "<< digitalRead(Button1) << " Button2: " << digitalRead(Button2) << std::endl;
-
         if((digitalRead(Button1) == LOW) && !left_done) {
             // std::cout << "TLACITKO 1 STISKNUTO" << std::endl;
             start_time = millis();
@@ -422,11 +434,25 @@ void jed_a_sbirej_kostky_buttons_fast(byte pocet_kostek) {
         //     delay(100);
         //     start_time_for_try = millis();
             if(je_tam_kostka_ir()){ // je tam kostka
-                delay(400);
-                man.motor(left_id).speed(0);
-                man.motor(right_id).speed(0);
-                posbyrane_kostky++;
-                chyt_a_uloz_kostku();
+                    posbyrane_kostky++;
+                    if(!taskRunning && taskChytHandle == NULL) {
+                        taskRunning = true;
+                        BaseType_t res = xTaskCreatePinnedToCore(
+                            taskChytAUlozKostku,      // Funkce tasku
+                            "ChytKostku",             // Jméno tasku
+                            4096,                     // Stack size (slova, ne bajty)
+                            NULL,                     // Parametry
+                            1,                        // Priorita
+                            &taskChytHandle,          // Handle
+                            0                         // Core
+                        );
+                        if(res != pdPASS){
+                            // selhalo vytvoření tasku -> rollback
+                            taskRunning = false;
+                            taskChytHandle = NULL;
+                            std::cout << "ERROR: task create failed" << std::endl;
+                        }
+                }
             }
         // }
     }
@@ -435,13 +461,12 @@ void jed_a_sbirej_kostky_buttons_fast(byte pocet_kostek) {
     man.motor(right_id).speed(0);
     man.motor(left_id).power(0);
     man.motor(right_id).power(0);
-    if(je_tam_kostka_ir()){ // je tam kostka
-        posbyrane_kostky++;
-        chyt_a_uloz_kostku();
-    }
+    
     zavri_prepazku();
     delay(500);
 }
+
+
 
 void nachystej_se(){
     rkLedBlue(true);
@@ -465,12 +490,14 @@ void vyhrej_to_rychlejsi(){// rychlejsi v rohach asinchroni sbirani hostek
     bool sbirej = true;
     int start_time = millis();
     /////////////////////////////////////prvni
-    delay(1000);
+    
     //forward(20, 20);
     //radius_left(70, 90, 40);
-    jed_a_sbirej_kostky_buttons();
+    jed_a_sbirej_kostky_buttons_fast();
+    
     backward(dozadu_kratce, 30);        
     turn_on_spot_left(90, 40);
+    // delay(1000);
     orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
                          []() -> uint32_t { return rkUltraMeasure(2); }, 28);
     delay(100);
@@ -493,7 +520,7 @@ void vyhrej_to_rychlejsi(){// rychlejsi v rohach asinchroni sbirani hostek
     otevri_klepeta();
     otevri_prepazku();
     /////////////////////////////////////treti
-    jed_a_sbirej_kostky_buttons();
+    jed_a_sbirej_kostky_buttons_fast();
     backward(dozadu_dlouze, 30);
     int vzdalenost_od_zdi = rkUltraMeasure(1);
     delay(50);
@@ -503,7 +530,7 @@ void vyhrej_to_rychlejsi(){// rychlejsi v rohach asinchroni sbirani hostek
         backward(dozadu_dlouze, 30);
         turn_on_spot_left(30, 40);
         delay(100);
-        jed_a_sbirej_kostky_buttons();
+        jed_a_sbirej_kostky_buttons_fast();
         backward(150, 30);
     }
         
@@ -515,7 +542,7 @@ void vyhrej_to_rychlejsi(){// rychlejsi v rohach asinchroni sbirani hostek
     otevri_klepeta();
     otevri_prepazku();
     /////////////////////////////////////ctvrta
-    jed_a_sbirej_kostky_buttons();
+    jed_a_sbirej_kostky_buttons_fast();
     backward(dozadu_kratce, 30);
     vzdalenost_od_zdi = rkUltraMeasure(1);
     delay(50);
@@ -803,36 +830,6 @@ void loop() {
 
         vyhrej_to_zvl_pozice();
 
-        // delay(2000);
-
-        // jed_a_sbirej_kostky_buttons();
-        // backward(150, 30);
-
-        // int vzdalenost_od_zdi = rkUltraMeasure(1);
-        // delay(50);
-
-        // if(vzdalenost_od_zdi < 90) { // do toho vzdalenyho rohu
-        //     turn_on_spot_right(30, 40);
-        //     backward(150, 30);
-        //     turn_on_spot_left(30, 40);
-        //     delay(100);
-        //     jed_a_sbirej_kostky_buttons();
-        //     backward(150, 30);
-        // }
-        // turn_on_spot_left(90, 40);
-        // delay(100);
-        // orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
-        //                      []() -> uint32_t { return rkUltraMeasure(2); }, 28);
-        // delay(100);
-        // otevri_klepeta();
-        // otevri_prepazku();
-
-        // /////////////////////////////////////pata
-        
-        // int draha = 880 - vzdalenost_od_zdi;// 720 + 160 
-        // std::cout<< "Draha: " << draha << " mm" << std::endl;
-
-        // jed_a_sbirej_kostky_mm(draha, true);
     }
     if( rkButtonIsPressed(BTN_DOWN)) {
         vyhrej_to();
@@ -847,10 +844,7 @@ void loop() {
         // ruka_nahoru();
         rkLedYellow(true);
         //measure_color();
-        while(true){
-            chyt_a_uloz_kostku();
-            delay(2000);
-        }
+        vyhrej_to_rychlejsi(); 
         rkLedYellow(false);
 
         
