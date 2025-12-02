@@ -483,7 +483,7 @@ void vyhrej_to_rychlejsi(){// rychlejsi v rohach asinchroni sbirani hostek
     rkLedGreen(true);
     bool sbirej = true;
     int start_time = millis();
-    /////////////////////////////////////prvni
+    /////////////////////////////////////prvni 
     
     //forward(20, 20);
     //radius_left(70, 90, 40);
@@ -759,7 +759,7 @@ void vyhrej_to(){
     delay(100);
     vzdalenost_od_zdi = rkUltraMeasure(1);
     delay(50);
-    turn_on_spot_left(90, 40);
+    turn_on_spot_left(88, 40);
     otevri_klepeta();
     otevri_prepazku();
     /////////////////////////////////////sesta
@@ -838,8 +838,40 @@ void loop() {
         // ruka_nahoru();
         rkLedYellow(true);
         //measure_color();
-        vyhrej_to_rychlejsi(); 
-        rkLedYellow(false);
+        jed_a_sbirej_kostky_buttons();
+        backward(dozadu_kratce, 30);
+        int vzdalenost_od_zdi = rkUltraMeasure(1);
+        delay(50);
+        turn_on_spot_left(90, 40);
+        delay(100);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                            []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+        delay(100);
+        otevri_klepeta();
+        otevri_prepazku();
+        /////////////////////////////////////pata
+
+        
+        int draha = 880 - vzdalenost_od_zdi;// 720 + 160
+        jed_a_sbirej_kostky_mm(draha ,true);
+
+        delay(100);
+        orient_to_wall(true, []() -> uint32_t { return rkUltraMeasure(1); },
+                            []() -> uint32_t { return rkUltraMeasure(2); }, 28);
+        delay(100);
+        vzdalenost_od_zdi = rkUltraMeasure(1);
+        delay(50);
+        turn_on_spot_left(88, 40);
+        otevri_klepeta();
+        otevri_prepazku();
+        /////////////////////////////////////sesta
+        draha = 470 - vzdalenost_od_zdi;// 720 + 160
+        jed_a_sbirej_kostky_mm(draha, true);
+        otevri_vsechny_zasobniky();
+        forward_acc(220, 15);
+        delay(500);
+        zavri_vsechny_zasobniky();
+            rkLedYellow(false);
 
         
     }
