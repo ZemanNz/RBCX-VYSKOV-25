@@ -32,7 +32,7 @@ bool is_green_detected(){
     return false;
 }
 
-bool is_blue_detected (){
+bool is_blue_detected (){ 
     if((b > (g + 15)) && (b> (r + 15)) && (b > 110)){
         return true;
     }
