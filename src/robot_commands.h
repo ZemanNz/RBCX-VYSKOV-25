@@ -185,7 +185,7 @@ void ruka_dolu_neb(){
 }
 
 bool je_tam_kostka_ir(){
-    int r_ir = rkIrRight();
+    int r_ir = rkIrLeft();
     std::cout<< " IR pravy: " << r_ir << std::endl;
     if(r_ir < 150 && r_ir > 10){
         return true;
